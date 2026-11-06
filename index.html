@@ -14,6 +14,10 @@
   <!-- Excel İşleme ve Grafik Çizimi İçin Gerekli Kütüphaneler -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Firebase SDK (v9 compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 
   <style>
     :root {
@@ -1027,6 +1031,23 @@
     }
 
     // TAB 1: ŞAMPİYONLAR PANOSU JS
+    
+    // -----------------------------------------------------
+    // FIREBASE INITIALIZATION & CLOUD SYNC
+    // -----------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfcJu8IcoJqaE6_R9Icy9wt3WBy9Kb_kc",
+      authDomain: "balcova-pano.firebaseapp.com",
+      projectId: "balcova-pano",
+      storageBucket: "balcova-pano.firebasestorage.app",
+      messagingSenderId: "337497814939",
+      appId: "1:337497814939:web:34f2b9b89a1a94d6ac933e",
+      measurementId: "G-LHFZ31KGDX"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     const INITIAL_VICTORIES = [
       {
         "id": "v_picker_temmuz_1",
@@ -1314,31 +1335,39 @@
     }
 
     function init() {
-      // Önceki versiyondaki fotoğrafları korumak için merge yapıyoruz
-      const oldSaved = localStorage.getItem('balcova_pano_records_v15_edit') || localStorage.getItem('balcova_pano_records_v16_fixed');
-      if (oldSaved) {
-        try {
-          const parsed = JSON.parse(oldSaved);
-          // Fırın kaydını güncelle
-          victoriesList = parsed.map(item => {
-            if (item.id === 'v_firin_ekim') {
-              return { ...item, rewardType: 'KUPON', rewardAmount: 600 };
-            }
-            return item;
-          });
-        } catch (e) {
-          victoriesList = INITIAL_VICTORIES;
-        }
-      } else {
-        victoriesList = INITIAL_VICTORIES;
-      }
-      localStorage.setItem('balcova_pano_records_v16_fixed', JSON.stringify(victoriesList));
-      localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
-
-      renderStats();
-      renderVictories();
-      lucide.createIcons();
       drawMonthlyTrend();
+      
+      // Bulut veritabanından (Firestore) canlı dinleyici başlat
+      db.collection("victories").onSnapshot(async (snapshot) => {
+        if (snapshot.empty) {
+          // Veritabanı henüz boşsa başlangıç verilerini yükle
+          const batch = db.batch();
+          INITIAL_VICTORIES.forEach(v => {
+            const docRef = db.collection("victories").doc(v.id);
+            batch.set(docRef, { ...v, createdAt: Date.now() });
+          });
+          await batch.commit();
+        } else {
+          victoriesList = [];
+          snapshot.forEach(doc => {
+            victoriesList.push(doc.data());
+          });
+          // Sıralama (createdAt veya rank)
+          victoriesList.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          
+          renderStats();
+          renderVictories();
+          lucide.createIcons();
+        }
+      }, (error) => {
+        console.error("Firestore bağlantı hatası:", error);
+        showToast("Bulut bağlantısı kurulamadı: " + error.message);
+        // Fallback: Yerel veriyi göster
+        victoriesList = INITIAL_VICTORIES;
+        renderStats();
+        renderVictories();
+        lucide.createIcons();
+      });
     }
 
     function renderStats() {
@@ -1709,14 +1738,15 @@
       }
     }
 
-    function saveVictory(e) {
+    async function saveVictory(e) {
       e.preventDefault();
       const cat = document.getElementById('fCategory').value;
       const rType = document.getElementById('fRewardType').value;
       const rAmount = Number(document.getElementById('fRewardAmount').value) || 0;
 
+      const newId = editingId ? editingId : "v_" + Date.now();
       const newEntry = {
-        id: editingId ? editingId : "v_" + Date.now(),
+        id: newId,
         category: cat,
         rank: Number(document.getElementById('fRank').value),
         title: document.getElementById('fTitle').value.trim(),
@@ -1724,36 +1754,33 @@
         rewardAmount: rAmount,
         extraPerk: document.getElementById('fExtraPerk').value.trim(),
         date: document.getElementById('fDate').value.trim() || "Yeni Kayıt",
-        photo: uploadedPhotoBase64 || (document.getElementById('fPhoto') ? document.getElementById('fPhoto').value.trim() : '')
+        photo: uploadedPhotoBase64 || (document.getElementById('fPhoto') ? document.getElementById('fPhoto').value.trim() : ''),
+        updatedAt: Date.now()
       };
 
-      if (editingId) {
-        const index = victoriesList.findIndex(v => v.id === editingId);
-        if (index !== -1) victoriesList[index] = newEntry;
-        editingId = null;
-        showToast("Kayıt başarıyla güncellendi.");
-      } else {
-        victoriesList.unshift(newEntry);
-        showToast("Yeni derece panoya başarıyla eklendi.");
+      try {
+        await db.collection("victories").doc(newId).set(newEntry, { merge: true });
+        showToast(editingId ? "Kayıt bulutta güncellendi (Herkeste canlı)!" : "Yeni başarı buluta eklendi (Herkeste canlı)!");
+        if (!editingId) triggerConfetti();
+      } catch (err) {
+        console.error("Buluta kaydetme hatası:", err);
+        alert("Buluta kaydederken hata oluştu: " + err.message + "\nLütfen Firestore Database kurallarını kontrol edin.");
       }
 
-      localStorage.setItem('balcova_pano_records_v16_fixed', JSON.stringify(victoriesList));
-      localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
-      closeModal(); 
-      renderStats(); 
-      renderVictories(); 
-      if (!editingId) triggerConfetti(); 
+      editingId = null;
+      closeModal();
     }
 
-    function deleteVictory(id) {
+    async function deleteVictory(id) {
       const pass = prompt("Bu kaydı silmek için yönetici şifresini girin:");
       if (pass === "Balcova35") {
-        victoriesList = victoriesList.filter(v => v.id !== id);
-        localStorage.setItem('balcova_pano_records_v16_fixed', JSON.stringify(victoriesList));
-        localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
-        renderStats(); 
-        renderVictories(); 
-        showToast("Kayıt başarıyla silindi.");
+        try {
+          await db.collection("victories").doc(id).delete();
+          showToast("Kayıt buluttan silindi (Tüm cihazlarda silindi).");
+        } catch (err) {
+          console.error("Silme hatası:", err);
+          alert("Buluttan silerken hata oluştu: " + err.message);
+        }
       } else if (pass !== null) {
         alert("Hatalı şifre! Silme işlemi iptal edildi.");
       }
