@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yemeksepeti Market Balçova - Şampiyonlar & KPI Panosu</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Excel İşleme ve Grafik Çizimi İçin Gerekli Kütüphaneler -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --primary: #ea004b;
+      --primary-dark: #b8003a;
+      --primary-light: #ff2a6d;
+      --bg-dark: #0f1117;
+      --card-bg: rgba(26, 31, 46, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --gold: #ffb800;
+      --silver: #cbd5e1;
+      --bronze: #d97706;
+      --ticket-color: #10b981;
+      --coupon-color: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(234, 0, 75, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 184, 0, 0.1) 0%, transparent 40%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 10px;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(234, 0, 75, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .brand-titles h1 {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-titles h1 span {
+      background: linear-gradient(90deg, #ff4b72, #ffb800);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-titles p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 11px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 16px rgba(234, 0, 75, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(234, 0, 75, 0.5);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #ffb800, #d97706);
+      color: #0f1117;
+      box-shadow: 0 4px 16px rgba(255, 184, 0, 0.3);
+    }
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 184, 0, 0.5);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ANA SEKMELER (TABS) */
+    .main-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+    }
+    .main-tab-btn {
+      flex: 1;
+      padding: 14px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .main-tab-btn:hover {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+    .main-tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(234, 0, 75, 0.4);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* SUMMARY STATS GRID */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 18px 20px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      backdrop-filter: blur(12px);
+      transition: transform 0.2s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* NSFR TAB STYLES */
+    .upload-zone {
+      border: 2px dashed var(--primary);
+      background: rgba(234, 0, 75, 0.05);
+      border-radius: 20px;
+      padding: 40px 20px;
+      text-align: center;
+      margin-bottom: 24px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .upload-zone:hover {
+      background: rgba(234, 0, 75, 0.1);
+      border-color: var(--primary-light);
+    }
+    .upload-zone i { margin-bottom: 12px; color: var(--primary); }
+    .upload-zone h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .upload-zone p { font-size: 13px; color: var(--text-muted); }
+    
+    #fileInput { display: none; }
+
+    .nsfr-dashboard { display: none; }
+    
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 900px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+    .chart-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+    }
+    .chart-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 20px; color: #fff; text-align: center; }
+    .canvas-container { position: relative; height: 300px; width: 100%; }
+
+    .table-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      overflow-x: auto;
+    }
+    .table-container h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #fff; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--card-border); font-size: 13px; }
+    th { color: var(--text-muted); font-weight: 700; background: rgba(0,0,0,0.2); }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* REWARD LEGEND BOX */
+    .reward-legend-box {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(16, 185, 129, 0.1));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 18px 24px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 12px; }
+    .legend-badge { padding: 6px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; }
+    .badge-coupon { background: rgba(139, 92, 246, 0.2); border: 1px solid var(--coupon-color); color: #c4b5fd; }
+    .badge-ticket { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--ticket-color); color: #6ee7b7; }
+    .badge-trophy { background: rgba(255, 184, 0, 0.2); border: 1px solid var(--gold); color: #fde047; }
+    .badge-firin { background: rgba(249, 115, 22, 0.2); border: 1px solid #f97316; color: #fdba74; }
+    .badge-picker { background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #fda4af; }
+    .victory-card.category-FIRIN { border-top: 4px solid #f97316 !important; }
+    .victory-card.category-PICKER { border-top: 4px solid #f43f5e !important; }
+    .rank-pill.r-firin { background: rgba(249, 115, 22, 0.2); border: 1px solid #f97316; color: #fdba74; }
+    .rank-pill.r-picker { background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #fda4af; }
+    .reward-box.type-firin { color: #fdba74; }
+    .reward-box.type-picker { color: #fda4af; }
+
+    .badge-fuf { background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #86efac; }
+    .victory-card.category-FUF { border-top: 4px solid #22c55e !important; }
+    .rank-pill.r-fuf { background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #86efac; }
+    .reward-box.type-fuf { color: #86efac; }
+
+    /* YENİ: PICKER ÖZEL KART TASARIMI (Taçlı ve Resimli) */
+    .victory-card.category-PICKER { 
+      border-top: none !important;
+      background: linear-gradient(145deg, rgba(26, 31, 46, 0.95), rgba(244, 63, 94, 0.15));
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(244, 63, 94, 0.2);
+    }
+    
+    .picker-profile-container {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 10px auto 20px auto;
+    }
+    
+    .picker-crown {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%) rotate(5deg);
+      color: var(--gold);
+      fill: var(--gold);
+      width: 40px;
+      height: 40px;
+      z-index: 10;
+      filter: drop-shadow(0 2px 8px rgba(255,184,0,0.6));
+    }
+    
+    .picker-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid var(--gold);
+      box-shadow: 0 0 20px rgba(255, 184, 0, 0.3);
+    }
+    
+    .form-group.photo-group { display: none; }
+
+    /* HALL OF FAME / YILDIZ GÖREVLİLER BÖLÜMÜ */
+    .hall-of-fame-section {
+      margin-bottom: 32px;
+      animation: fadeIn 0.6s ease;
+    }
+    
+    .hof-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    
+    .hof-title span {
+      background: linear-gradient(90deg, #f43f5e, #fda4af);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hof-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: center;
+    }
+    
+    .hof-card {
+      background: linear-gradient(145deg, rgba(26, 31, 46, 0.95), rgba(244, 63, 94, 0.15));
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-radius: 24px;
+      padding: 24px 32px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(244, 63, 94, 0.15);
+      position: relative;
+      transition: transform 0.3s ease;
+      min-width: 280px;
+    }
+    
+    .hof-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(244, 63, 94, 0.3);
+    }
+    
+    .hof-crown {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%) rotate(5deg);
+      color: var(--gold);
+      fill: var(--gold);
+      width: 48px;
+      height: 48px;
+      z-index: 10;
+      filter: drop-shadow(0 4px 12px rgba(255,184,0,0.6));
+    }
+    
+    .hof-img-wrapper {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 16px auto;
+    }
+    
+    .hof-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid var(--gold);
+      box-shadow: 0 0 24px rgba(255, 184, 0, 0.25);
+    }
+    
+    .hof-rank-badge {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.9), rgba(159, 18, 57, 0.9));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      padding: 4px 16px;
+      border-radius: 20px;
+      border: 2px solid #1a1f2e;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    
+    .hof-name {
+      color: var(--gold);
+      font-size: 22px;
+      font-weight: 900;
+      margin-top: 16px;
+      margin-bottom: 4px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .hof-desc {
+      font-size: 14px;
+      color: #fda4af;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    
+    .hof-date {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .hof-delete {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: opacity 0.2s;
+    }
+    
+    .hof-delete:hover {
+      opacity: 1;
+    }
+
+    .hof-edit {
+      background: transparent;
+      border: none;
+      color: #38bdf8;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+    .hof-edit:hover { opacity: 1; }
+    
+    .edit-btn { background: transparent; border: none; color: #38bdf8; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; }
+    .edit-btn:hover { opacity: 1; }
+
+
+
+
+
+    /* VICTORIES GRID & FILTER */
+    .filters-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+    .filter-tabs { display: flex; gap: 8px; background: rgba(255, 255, 255, 0.04); padding: 6px; border-radius: 14px; border: 1px solid var(--card-border); flex-wrap: wrap; }
+    .tab-btn { padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+    .tab-btn.active { background: var(--primary); color: #fff; font-weight: 700; box-shadow: 0 4px 12px rgba(234, 0, 75, 0.35); }
+    
+    .search-input-wrap { position: relative; min-width: 260px; }
+    .search-input-wrap input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 10px 14px 10px 38px; border-radius: 12px; color: #fff; font-size: 13px; outline: none; }
+    .search-input-wrap input:focus { border-color: var(--primary); }
+    .search-input-wrap i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; }
+
+    .victories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 20px; }
+    .victory-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 22px; position: relative; backdrop-filter: blur(14px); transition: all 0.25s ease; display: flex; flex-direction: column; justify-content: space-between; }
+    .victory-card:hover { transform: translateY(-5px); border-color: rgba(255, 255, 255, 0.25); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); }
+    .victory-card.rank-1 { border-top: 4px solid var(--gold); }
+    .victory-card.rank-2 { border-top: 4px solid var(--silver); }
+    .victory-card.rank-3 { border-top: 4px solid var(--bronze); }
+    .victory-card.rank-4, .victory-card.rank-5 { border-top: 4px solid #38bdf8; }
+
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .category-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; background: rgba(255, 255, 255, 0.08); color: var(--text-muted); letter-spacing: 0.5px; }
+    
+    .rank-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 900; }
+    .rank-pill.r-1 { background: linear-gradient(135deg, rgba(255, 184, 0, 0.25), rgba(217, 119, 6, 0.3)); border: 1px solid var(--gold); color: #ffca28; }
+    .rank-pill.r-2 { background: rgba(203, 213, 225, 0.2); border: 1px solid var(--silver); color: #e2e8f0; }
+    .rank-pill.r-3 { background: rgba(217, 119, 6, 0.2); border: 1px solid var(--bronze); color: #f59e0b; }
+    .rank-pill.r-other { background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; }
+
+    .card-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; line-height: 1.3; }
+    .card-date { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; margin-bottom: 14px; }
+    .card-footer { border-top: 1px solid var(--card-border); padding-top: 14px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .reward-box { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; }
+    .reward-box.type-coupon { color: #c4b5fd; }
+    .reward-box.type-ticket { color: #6ee7b7; }
+    .reward-box.type-trophy { color: #fde047; }
+    .delete-btn { background: transparent; border: none; color: #ef4444; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; }
+    .delete-btn:hover { opacity: 1; }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px; }
+    .modal-box { background: #181d2c; border: 1px solid var(--card-border); border-radius: 22px; width: 100%; max-width: 520px; padding: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); }
+    .modal-box h3 { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+    .form-group input, .form-group select { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 10px 14px; border-radius: 10px; color: #fff; font-size: 13px; outline: none; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+
+    /* TOAST */
+    #toast { position: fixed; bottom: 24px; right: 24px; background: #1e293b; border-left: 4px solid var(--primary); padding: 14px 20px; border-radius: 12px; color: #fff; font-size: 14px; font-weight: 600; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); display: none; z-index: 1000; }
+
+    /* MOBILE RESPONSIVE AYARLARI */
+    @media (max-width: 768px) {
+      .container { padding: 12px; }
+      
+      header { flex-direction: column; align-items: flex-start; gap: 16px; padding-bottom: 16px; }
+      .header-actions { width: 100%; flex-direction: column; }
+      .header-actions .btn { width: 100%; justify-content: center; }
+      
+      .brand-box { width: 100%; }
+      .logo-badge { width: 48px; height: 48px; flex-shrink: 0; }
+      .brand-titles h1 { font-size: 18px; flex-wrap: wrap; }
+      .brand-titles p { font-size: 12px; }
+
+      .main-tabs { flex-direction: column; gap: 6px; }
+      .main-tab-btn { padding: 10px; font-size: 14px; }
+
+      .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+      .stat-card { padding: 14px 16px; }
+      
+      .reward-legend-box { flex-direction: column; align-items: flex-start; padding: 16px; gap: 12px; }
+      .legend-item { align-items: flex-start; flex-direction: column; gap: 6px; }
+
+      .kpi-title-wrap h2 { font-size: 16px; }
+      .kpi-weights-grid { grid-template-columns: 1fr 1fr; }
+      .rewards-scale { grid-template-columns: 1fr; }
+      
+      .filters-bar { flex-direction: column; align-items: stretch; gap: 12px; }
+      .filter-tabs { 
+        flex-wrap: nowrap; 
+        overflow-x: auto; 
+        padding-bottom: 8px; 
+        -webkit-overflow-scrolling: touch;
+      }
+      .filter-tabs::-webkit-scrollbar { height: 4px; }
+      .filter-tabs::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+      .tab-btn { white-space: nowrap; }
+      
+      .search-input-wrap { width: 100%; min-width: unset; }
+
+      .victories-grid { grid-template-columns: 1fr; gap: 12px; }
+      .victory-card { padding: 16px; }
+      .card-top { flex-direction: column; gap: 10px; }
+      .card-title { font-size: 16px; }
+      .card-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .delete-btn { align-self: flex-end; padding: 8px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; }
+
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .modal-box { padding: 20px; margin: 12px; max-height: 90vh; overflow-y: auto; }
+      
+      .upload-zone { padding: 24px 16px; }
+      .upload-zone h3 { font-size: 16px; }
+    }
+    
+    @media (max-width: 400px) {
+      .kpi-weights-grid { grid-template-columns: 1fr; }
+    }
+
+    /* WELCOME OVERLAY (AUTOPLAY BYPASS) */
+    #welcomeOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      cursor: pointer;
+      transition: opacity 0.5s ease;
+    }
+    
+    .pulse-btn {
+      background: linear-gradient(135deg, var(--gold), var(--bronze));
+      border: none;
+      padding: 16px 32px;
+      font-size: 20px;
+      font-weight: 900;
+      color: #000;
+      border-radius: 50px;
+      margin-top: 24px;
+      cursor: pointer;
+      box-shadow: 0 0 0 0 rgba(255, 184, 0, 0.7);
+      animation: pulse 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+    }
+
+    @keyframes pulse {
+      to {
+        box-shadow: 0 0 0 30px rgba(255, 184, 0, 0);
+      }
+    }
+    
+    #musicToggleBtn {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 1000;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+  <!-- MÜZİK VE SES EFEKTİ (mp3 linkini kendi istediğiniz bir müzikle değiştirebilirsiniz) -->
+  <audio id="champMusic" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_29ae0755ee.mp3?filename=champion-80bpm-123078.mp3" type="audio/mpeg">
+    <source src="https://actions.google.com/sounds/v1/crowds/crowd_loud_cheer.ogg" type="audio/ogg">
+  </audio>
+
+  <!-- GİRİŞ EKRANI (Tarayıcıların otomatik müzik çalmayı engellemesini aşmak için) -->
+  <div id="welcomeOverlay">
+    <i data-lucide="trophy" style="width: 80px; height: 80px; color: var(--gold); margin-bottom: 20px;"></i>
+    <h1 style="font-size: 32px; font-weight: 900; text-align: center; margin-bottom: 10px;">Yemeksepeti Market Balçova</h1>
+    <p style="font-size: 16px; color: var(--text-muted);">Şampiyonlar Panosuna Hoş Geldiniz</p>
+    <button class="pulse-btn" id="startBtn">Panoya Giriş Yap</button>
+  </div>
+  
+  <button id="musicToggleBtn" onclick="toggleMusic()" title="Müziği Kapat/Aç">
+    <i data-lucide="volume-2" id="volIcon" style="width: 20px; height: 20px;"></i>
+  </button>
+
+
+  <div class="container">
+    <header>
+      <div class="brand-box">
+        <div class="logo-badge">
+          <i data-lucide="trophy" style="width: 30px; height: 30px; color: #fff;"></i>
+        </div>
+        <div class="brand-titles">
+          <h1>Yemeksepeti Market <span>Balçova</span></h1>
+          <p><i data-lucide="map-pin" style="width: 14px; height: 14px; color: var(--primary);"></i> Şampiyonluklar, Lig Dereceleri ve Depo KPI Performans Paneli</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-gold" onclick="triggerConfetti()">
+          <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i> Konfeti Patlat
+        </button>
+        <button class="btn btn-primary" onclick="openModal()">
+          <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i> Yeni Başarı / Derece Ekle
+        </button>
+      </div>
+    </header>
+
+
+    <!-- HALL OF FAME (PICKER) BÖLÜMÜ -->
+    <div class="hall-of-fame-section" id="hallOfFameSection" style="display: none;">
+      <h2 class="hof-title">
+        <i data-lucide="zap" style="width: 24px; height: 24px; color: #f43f5e;"></i>
+        <span>Ayın Yıldız Görevlileri</span>
+      </h2>
+      <div class="hof-grid" id="hofGrid">
+        <!-- Picker kartları buraya JS ile dolacak -->
+      </div>
+    </div>
+
+    <div class="main-tabs">
+      <button class="main-tab-btn active" onclick="switchMainTab('champions', this)">
+        <i data-lucide="medal" style="width: 18px; height: 18px;"></i> Şampiyonlar Panosu
+      </button>
+      <button class="main-tab-btn" onclick="switchMainTab('nsfr', this)">
+        <i data-lucide="bar-chart-3" style="width: 18px; height: 18px;"></i> nSFR / KPI Rapor Analizi
+      </button>
+    </div>
+
+    <!-- TAB 1: ŞAMPİYONLAR PANOSU -->
+    <div id="tab-champions" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(234, 0, 75, 0.2); color: var(--primary);">
+            <i data-lucide="award" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <div class="stat-value" id="statTotalVictories">0</div>
+            <div class="stat-label">Toplam Başarı & Derece</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(255, 184, 0, 0.2); color: var(--gold);">
+            <i data-lucide="crown" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <div class="stat-value" id="statFirstPlaces">0</div>
+            <div class="stat-label">1.lik / Şampiyonluklar</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(139, 92, 246, 0.2); color: var(--coupon-color);">
+            <i data-lucide="receipt" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <div class="stat-value" id="statTotalCoupon" style="color: #c4b5fd;">0 ₺</div>
+            <div class="stat-label">Toplam Kupon Ödülü (Lig)</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: rgba(16, 185, 129, 0.2); color: var(--ticket-color);">
+            <i data-lucide="credit-card" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <div class="stat-value" id="statTotalTicket" style="color: #6ee7b7;">0 ₺</div>
+            <div class="stat-label">Toplam Ticket & KPI Ödülü</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reward-legend-box">
+        <div class="legend-item">
+          <span class="legend-badge badge-coupon"><i data-lucide="receipt" style="width: 14px; height: 14px;"></i> Kupon Ödülü</span>
+          <span style="font-size: 13px; color: var(--text-muted);">DMART Ligi Haftalık Sonuçlarında</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge badge-ticket"><i data-lucide="credit-card" style="width: 14px; height: 14px;"></i> Ticket Ödülü</span>
+          <span style="font-size: 13px; color: var(--text-muted);">Ayın En İyi 5 DMART'ı genel performansında</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge badge-trophy"><i data-lucide="trophy" style="width: 14px; height: 14px;"></i> Challenge Kupası</span>
+          <span style="font-size: 13px; color: var(--text-muted);">Tur Challenge yarışmalarında</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge badge-firin"><i data-lucide="flame" style="width: 14px; height: 14px;"></i> Fırın Derecesi</span>
+          <span style="font-size: 13px; color: var(--text-muted);">Ayın Fırın Performansı (nSFR*Satış*Fire)</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge badge-picker"><i data-lucide="zap" style="width: 14px; height: 14px;"></i> Ayın Görevlisi</span>
+          <span style="font-size: 13px; color: var(--text-muted);">En İyi 10 DMART Görevlisi (Picker)</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge badge-fuf"><i data-lucide="leaf" style="width: 14px; height: 14px;"></i> F/UF Derecesi</span>
+          <span style="font-size: 13px; color: var(--text-muted);">Ayın F/UF Performansı (nSFR*Satış*Fire - F/UF Ürünler)</span>
+        </div>
+      </div>
+
+      <div class="filters-bar">
+        <div class="filter-tabs">
+          <button class="tab-btn active" onclick="filterBy('ALL', this)">Tüm Dereceler</button>
+          <button class="tab-btn" onclick="filterBy('KUPON', this)">Kupon (Lig)</button>
+          <button class="tab-btn" onclick="filterBy('TICKET', this)">Ticket (Ayın Deposu)</button>
+          <button class="tab-btn" onclick="filterBy('CHALLENGE', this)">Challenge</button>
+          <button class="tab-btn" onclick="filterBy('FIRIN', this)">Fırın 🥖</button>
+          <button class="tab-btn" onclick="filterBy('PICKER', this)">Ayın Görevlisi (Picker) ⚡</button>
+          <button class="tab-btn" onclick="filterBy('FUF', this)">F/UF Performansı 🥬</button>
+          <button class="tab-btn" onclick="filterBy('RANK_1', this)">Sadece 1.likler 🏆</button>
+        </div>
+
+        <div class="search-input-wrap">
+          <i data-lucide="search"></i>
+          <input type="text" id="searchInput" placeholder="Tur, ödül veya derece ara..." oninput="handleSearch()">
+        </div>
+      </div>
+
+      <div class="victories-grid" id="victoriesGrid"></div>
+    </div>
+
+    
+    <!-- TAB 2: NSFR / KPI ANALİZİ -->
+    <div id="tab-nsfr" class="tab-content">
+      
+      <!-- YENİ: 2026 AYLIK TREND GRAFİĞİ (SABİT VERİ) -->
+      <div class="table-container" style="margin-bottom: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3><i data-lucide="trending-down" style="width:18px; height:18px; vertical-align:middle; color:var(--primary);"></i> 2026 Yılı Aylık nSFR ve İade (Refund/Comp) Trendi</h3>
+          <span style="font-size:12px; background:rgba(16,185,129,0.2); color:#6ee7b7; padding:4px 10px; border-radius:12px; font-weight:700;">Son Güncelleme: Ekim</span>
+        </div>
+        <div class="canvas-container" style="height: 350px;">
+          <canvas id="monthlyTrendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- DETAYLI SKu / CCR3 ANALİZİ İÇİN DOSYA YÜKLEME ALANI -->
+      <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+        <i data-lucide="file-spreadsheet" style="width: 48px; height: 48px;"></i>
+        <h3>Aylık Kırılım Raporunu Yükle (.xlsx)</h3>
+        <p>Hata (CCR3) ve Ürün (SKU) bazlı detaylı analizi görmek için "DM - Operations - nSFR_SKU Details" excel dosyasını seçin.</p>
+        <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" onchange="handleFileUpload(event)">
+      </div>
+
+      <!-- YÜKLEME SONRASI AÇILAN DETAY DASHBOARD -->
+      <div class="nsfr-dashboard" id="nsfrDashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(234, 0, 75, 0.2); color: var(--primary);">
+              <i data-lucide="alert-circle" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div>
+              <div class="stat-value" id="nsfrTotalIssues">0</div>
+              <div class="stat-label">Toplam Kusurlu Bildirim (Adet)</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(255, 184, 0, 0.2); color: var(--gold);">
+              <i data-lucide="coins" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div>
+              <div class="stat-value" id="nsfrTotalCost">0 ₺</div>
+              <div class="stat-label">Toplam İade & Komp. Maliyeti</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">
+              <i data-lucide="target" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div>
+              <div class="stat-value" id="nsfrTopIssue" style="font-size:18px; margin-bottom:5px;">-</div>
+              <div class="stat-label">En Çok Yaşanan Sorun Nedeni</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-box">
+            <h3>Hata Nedenleri Dağılımı (CCR3)</h3>
+            <div class="canvas-container">
+              <canvas id="issueChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-box">
+            <h3>Kategori Bazlı Hata Dağılımı (Category L1)</h3>
+            <div class="canvas-container">
+              <canvas id="catChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <h3>En Sorunlu İlk 10 Ürün (SKU)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Ürün Adı (Product Name)</th>
+                <th>Kategori (Category L1)</th>
+                <th>Hata Sayısı (Frekans)</th>
+                <th>Toplam Maliyet (Refund & Comp)</th>
+              </tr>
+            </thead>
+            <tbody id="skuTableBody">
+              <!-- JS ile dolacak -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+<!-- ADD / EDIT MODAL (Sadeleştirilmiş) -->
+    <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <h3 id="modalTitle"><i data-lucide="plus-circle" style="color: var(--primary);"></i> Yeni Başarı & Derece Ekle</h3>
+      
+      <form id="addForm" onsubmit="saveVictory(event)">
+        <div class="form-group">
+          <label>Kategori</label>
+          <select id="fCategory" required onchange="handleCategoryChange(this.value)">
+            <option value="LİG">DMART Ligi (Kupon Ödülü)</option>
+            <option value="AYIN_DEPOSU">Ayın En İyi 5 DMART'ı (Ticket Ödülü)</option>
+            <option value="CHALLENGE">Challenge Zaferi (Kupa)</option>
+            <option value="FIRIN">Ayın Fırın Performansı (Fırın Derecesi 🥖)</option>
+            <option value="PICKER">Ayın En İyi 10 DMART Görevlisi (Picker ⚡)</option>
+            <option value="FUF">Ayın F/UF Performansı (F/UF Derecesi 🥬🍎)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kaçıncı Oldunuz? (Sıralama)</label>
+            <select id="fRank" required onchange="autoFillReward()">
+              <!-- JS dinamik dolduracak -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label id="lblTitle">Hafta / Tur / Başlık</label>
+            <input type="text" id="fTitle" placeholder="Örn: 13" required oninput="smartFillTitle()" onblur="smartFillTitle()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label id="lblDate">Hangi Ay? / Dönem / Tarih</label>
+            <input type="text" id="fDate" placeholder="Örn: Temmuz Dönemi" required>
+          </div>
+          <div class="form-group">
+            <label id="lblRewardType">Ödül Tutarı (Varsa ₺)</label>
+            <input type="number" id="fRewardAmount" placeholder="0" value="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label id="lblExtraPerk">Kazanılan Başarı / Ekstra Not</label>
+          <input type="text" id="fExtraPerk" placeholder="Örn: Şampiyonlar Ligi 1.'si">
+        </div>
+        
+        <div class="form-group photo-group" id="photoGroup" style="display: none;">
+          <label><i data-lucide="camera" style="width:14px; height:14px; vertical-align:middle;"></i> Görevli Fotoğrafı (Galeriden / Bilgisayardan Seçin)</label>
+          <input type="file" id="fPhotoFile" accept="image/*" style="margin-bottom:6px;" onchange="handlePhotoFile(event)">
+          <input type="text" id="fPhoto" placeholder="Veya internetten resim linki yapıştırın...">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal()">İptal</button>
+          <button type="submit" class="btn btn-primary">Kaydet & Panoya Ekle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    
+    // -----------------------------------------------------
+    // MUSIC & WELCOME OVERLAY JS
+    // -----------------------------------------------------
+    const music = document.getElementById('champMusic');
+    const volIcon = document.getElementById('volIcon');
+    let isMusicPlaying = false;
+
+    document.getElementById('startBtn').addEventListener('click', function() {
+      document.getElementById('welcomeOverlay').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('welcomeOverlay').style.display = 'none';
+      }, 500);
+      
+      // Müzik Çal ve Konfeti Patlat
+      music.volume = 0.5;
+      music.play().then(() => {
+        isMusicPlaying = true;
+        volIcon.setAttribute('data-lucide', 'volume-2');
+        lucide.createIcons();
+      }).catch(e => console.log("Müzik çalma engellendi: ", e));
+      
+      // Çoklu konfeti şöleni
+      triggerConfetti();
+      setTimeout(triggerConfetti, 1000);
+      setTimeout(triggerConfetti, 2500);
+    });
+
+    function toggleMusic() {
+      if (isMusicPlaying) {
+        music.pause();
+        volIcon.setAttribute('data-lucide', 'volume-x');
+      } else {
+        music.play();
+        volIcon.setAttribute('data-lucide', 'volume-2');
+      }
+      isMusicPlaying = !isMusicPlaying;
+      lucide.createIcons();
+    }
+
+    // -----------------------------------------------------
+    // TAB 1: ŞAMPİYONLAR PANOSU JS
+    // -----------------------------------------------------
+    const INITIAL_VICTORIES = [
+      {
+            "id": "v_picker_temmuz_1",
+            "title": "Burcu Meşe",
+            "category": "PICKER",
+            "rank": 1,
+            "date": "Temmuz Dönemi",
+            "rewardType": "PICKER",
+            "rewardAmount": 0,
+            "extraPerk": "Burcu Meşe - Türkiye 1.'si (nSFR * Prep Time * Putaway)",
+            "photo": ""
+      },
+      {
+            "id": "v_picker_temmuz_4",
+            "title": "Mehmet Yiğit Arslan",
+            "category": "PICKER",
+            "rank": 4,
+            "date": "Temmuz Dönemi",
+            "rewardType": "PICKER",
+            "rewardAmount": 0,
+            "extraPerk": "Mehmet Yiğit Arslan - Türkiye 4.'sü (nSFR * Prep Time * Putaway)",
+            "photo": "data:image/jpeg;base64,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"
+      },
+      {
+            "id": "v_picker_temmuz_5",
+            "title": "Gökhan Çalık",
+            "category": "PICKER",
+            "rank": 5,
+            "date": "Temmuz Dönemi",
+            "rewardType": "PICKER",
+            "rewardAmount": 0,
+            "extraPerk": "Gökhan Çalık - Türkiye 5.'si (nSFR * Prep Time * Putaway)",
+            "photo": ""
+      },
+      {
+            "id": "v_picker_ekim_9",
+            "title": "Mehmet Yiğit Aslan",
+            "category": "PICKER",
+            "rank": 9,
+            "date": "Ekim Dönemi",
+            "rewardType": "PICKER",
+            "rewardAmount": 0,
+            "extraPerk": "Mehmet Yiğit Aslan - Türkiye 9.'su (nSFR * Prep Time * Putaway)",
+            "photo": "data:image/jpeg;base64,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"
+      },
+      {
+            "id": "v_firin_ekim",
+            "title": "Ayın Fırın Performansı İyi 5 DMART'ı",
+            "category": "FIRIN",
+            "rank": 4,
+            "date": "Ekim Dönemi",
+            "rewardType": "FIRIN",
+            "rewardAmount": 0,
+            "extraPerk": "🥖 Balçova - Türkiye 4.'sü (nSFR * Satış * Fire)"
+      },
+      {
+            "id": "v18",
+            "title": "DMART Ligi 12. Hafta Sıralaması",
+            "category": "LİG",
+            "rank": 3,
+            "date": "DMART Ligi 12. Hafta",
+            "rewardType": "KUPON",
+            "rewardAmount": 850,
+            "extraPerk": "Şampiyonlar Ligi 3.'sü"
+      },
+      {
+            "id": "v17",
+            "title": "DMART Ligi 11. Hafta Zaferi",
+            "category": "LİG",
+            "rank": 1,
+            "date": "DMART Ligi 11. Hafta",
+            "rewardType": "KUPON",
+            "rewardAmount": 1250,
+            "extraPerk": "Şampiyonlar Ligi 1.'si"
+      },
+      {
+            "id": "v16",
+            "title": "DMART Ligi 10. Hafta Sıralaması",
+            "category": "LİG",
+            "rank": 3,
+            "date": "DMART Ligi 10. Hafta",
+            "rewardType": "KUPON",
+            "rewardAmount": 850,
+            "extraPerk": "Şampiyonlar Ligi 3.'sü"
+      },
+      {
+            "id": "v15",
+            "title": "DMART Ligi 9. Hafta Sıralaması",
+            "category": "LİG",
+            "rank": 3,
+            "date": "DMART Ligi 9. Hafta",
+            "rewardType": "KUPON",
+            "rewardAmount": 850,
+            "extraPerk": "Şampiyonlar Ligi 3.'sü"
+      },
+      {
+            "id": "v14",
+            "title": "DMART Ligi 8. Hafta Zaferi",
+            "category": "LİG",
+            "rank": 1,
+            "date": "DMART Ligi 8. Hafta",
+            "rewardType": "KUPON",
+            "rewardAmount": 1250,
+            "extraPerk": "Şampiyonlar Ligi 1.'si"
+      },
+      {
+            "id": "v13",
+            "title": "DMART Ligi 7. Hafta Zaferi",
+            "category": "LİG",
+            "rank": 1,
+            "date": "DMART Ligi 7. Hafta",
+            "rewardType": "KUPON",
+            "rewardAmount": 1875,
+            "extraPerk": "Şampiyonlar Ligi 1.'si (Özel Hafta)"
+      },
+      {
+            "id": "v12",
+            "title": "DMART Ligi 6. Hafta Zaferi",
+            "category": "LİG",
+            "rank": 1,
+            "date": "DMART Ligi 6. Hafta",
+            "rewardType": "KUPON",
+            "rewardAmount": 1250,
+            "extraPerk": "Şampiyonlar Ligi 1.'si"
+      },
+      {
+            "id": "v11",
+            "title": "DMART Ligi 5. Hafta Sıralaması",
+            "category": "LİG",
+            "rank": 4,
+            "date": "DMART Ligi 5. Hafta",
+            "rewardType": "KUPON",
+            "rewardAmount": 2100,
+            "extraPerk": "Şampiyonlar Ligi 4.'sü (Büyük Hafta)"
+      },
+      {
+            "id": "v10",
+            "title": "DMART Ligi 3. Hafta Sıralaması",
+            "category": "LİG",
+            "rank": 3,
+            "date": "DMART Ligi 3. Hafta",
+            "rewardType": "KUPON",
+            "rewardAmount": 850,
+            "extraPerk": "Şampiyonlar Ligi 3.'sü"
+      },
+      {
+            "id": "v3",
+            "title": "Ayın En İyi 5 DMART'ı - Ekim",
+            "category": "AYIN_DEPOSU",
+            "rank": 2,
+            "date": "Ekim Dönemi",
+            "rewardType": "TICKET",
+            "rewardAmount": 2500,
+            "extraPerk": "🎳 Bowling Organizasyonu"
+      },
+      {
+            "id": "v2",
+            "title": "Ayın En İyi 5 DMART'ı - Eylül",
+            "category": "AYIN_DEPOSU",
+            "rank": 3,
+            "date": "Eylül Dönemi",
+            "rewardType": "TICKET",
+            "rewardAmount": 2000,
+            "extraPerk": "🎳 Bowling Organizasyonu"
+      },
+      {
+            "id": "v1",
+            "title": "Ayın En İyi 5 DMART'ı - Mayıs",
+            "category": "AYIN_DEPOSU",
+            "rank": 4,
+            "date": "Mayıs Dönemi",
+            "rewardType": "TICKET",
+            "rewardAmount": 1500,
+            "extraPerk": "🎳 Bowling Organizasyonu"
+      },
+      {
+            "id": "v9",
+            "title": "44. Tur Challenge Sıralaması",
+            "category": "CHALLENGE",
+            "rank": 2,
+            "date": "44. Tur",
+            "rewardType": "KUPA",
+            "rewardAmount": 0,
+            "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
+      },
+      {
+            "id": "v8",
+            "title": "40. Tur Challenge Sıralaması",
+            "category": "CHALLENGE",
+            "rank": 2,
+            "date": "40. Tur",
+            "rewardType": "KUPA",
+            "rewardAmount": 0,
+            "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
+      },
+      {
+            "id": "v7",
+            "title": "38. Tur Challenge Sıralaması",
+            "category": "CHALLENGE",
+            "rank": 3,
+            "date": "38. Tur",
+            "rewardType": "KUPA",
+            "rewardAmount": 0,
+            "extraPerk": "B Grubu 3.'sü (Bronz Kupa 🥉)"
+      },
+      {
+            "id": "v6",
+            "title": "36. Tur Challenge Sıralaması",
+            "category": "CHALLENGE",
+            "rank": 2,
+            "date": "36. Tur",
+            "rewardType": "KUPA",
+            "rewardAmount": 0,
+            "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
+      },
+      {
+            "id": "v5",
+            "title": "32. Tur Challenge Zaferi",
+            "category": "CHALLENGE",
+            "rank": 1,
+            "date": "32. Tur",
+            "rewardType": "KUPA",
+            "rewardAmount": 0,
+            "extraPerk": "B Grubu 1.'si (Altın Kupa 🏆)"
+      },
+      {
+            "id": "v4",
+            "title": "25. Tur Challenge Sıralaması",
+            "category": "CHALLENGE",
+            "rank": 2,
+            "date": "25. Tur",
+            "rewardType": "KUPA",
+            "rewardAmount": 0,
+            "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
+      }
+];
+
+    let victoriesList = [];
+    let currentFilter = 'ALL';
+    let searchQuery = '';
+    let uploadedPhotoBase64 = '';
+
+    let editingId = null;
+
+    function editVictory(id) {
+      const pass = prompt("Bu kaydı düzenlemek için yönetici şifresini girin:");
+      if (pass !== "Balcova35") {
+        if (pass !== null) alert("Hatalı şifre! Düzenleme işlemi iptal edildi.");
+        return;
+      }
+      
+      const record = victoriesList.find(v => v.id === id);
+      if (!record) return;
+      
+      editingId = id;
+      document.getElementById('modalTitle').innerHTML = '<i data-lucide="edit" style="color: var(--primary);"></i> Kaydı Düzenle';
+      
+      document.getElementById('fCategory').value = record.category;
+      handleCategoryChange(record.category); 
+      
+      document.getElementById('fRank').value = record.rank;
+      document.getElementById('fTitle').value = record.title || '';
+      document.getElementById('fDate').value = record.date || '';
+      document.getElementById('fRewardAmount').value = record.rewardAmount || 0;
+      document.getElementById('fExtraPerk').value = record.extraPerk || '';
+      
+      uploadedPhotoBase64 = record.photo || '';
+      
+      document.getElementById('modalOverlay').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+
+    function getAvatarUrl(name, photo) {
+      if (photo && photo.trim() && photo !== 'mehmet.jpg') return photo;
+      const cleanName = (name || 'Yıldız').trim();
+      const parts = cleanName.split(' ').filter(Boolean);
+      let initials = 'DM';
+      if (parts.length >= 2) {
+        initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      } else if (parts.length === 1) {
+        initials = parts[0].substring(0, 2).toUpperCase();
+      }
+      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><rect width="128" height="128" rx="64" fill="#f43f5e"/><text x="64" y="78" font-size="46" font-weight="900" fill="#ffffff" font-family="Plus Jakarta Sans, sans-serif" text-anchor="middle">${initials}</text></svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
+    }
+
+    function init() {
+      const saved = localStorage.getItem('balcova_pano_records_v15_edit');
+      if (saved) {
+        try { victoriesList = JSON.parse(saved); } catch (e) { victoriesList = INITIAL_VICTORIES; }
+      } else {
+        victoriesList = INITIAL_VICTORIES;
+        localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
+      }
+      renderStats();
+      renderVictories();
+      lucide.createIcons();
+      drawMonthlyTrend();
+    }
+
+    function renderStats() {
+      document.getElementById('statTotalVictories').innerText = victoriesList.length;
+      document.getElementById('statFirstPlaces').innerText = victoriesList.filter(v => v.rank === 1).length;
+      
+      const totalCoupon = victoriesList.filter(v => v.rewardType === 'KUPON').reduce((sum, v) => sum + (Number(v.rewardAmount) || 0), 0);
+      // Fırın, F/UF, Picker ve Ayın Deposu gibi Kupon harici tüm parasal ödülleri sağdaki kutuda topla
+      const totalTicket = victoriesList.filter(v => v.rewardType !== 'KUPON' && v.rewardType !== 'KUPA').reduce((sum, v) => sum + (Number(v.rewardAmount) || 0), 0);
+
+      document.getElementById('statTotalCoupon').innerText = totalCoupon.toLocaleString('tr-TR') + ' ₺';
+      document.getElementById('statTotalTicket').innerText = totalTicket.toLocaleString('tr-TR') + ' ₺';
+    }
+
+    function renderVictories() {
+      // 1. AYIN GÖREVLİLERİNİ (PICKER) ÜST HALL OF FAME ALANINDA LİSTELE
+      const hofSection = document.getElementById('hallOfFameSection');
+      const hofGrid = document.getElementById('hofGrid');
+      hofGrid.innerHTML = '';
+      
+      let pickerList = victoriesList.filter(v => v.category === 'PICKER');
+      
+      // Eğer kullanıcı spesifik olarak Kupon, Ticket veya Challenge filtrelediyse Hall of Fame gizlenebilir
+      if (currentFilter !== 'ALL' && currentFilter !== 'PICKER') {
+        pickerList = [];
+      }
+      
+      if (pickerList.length > 0) {
+        hofSection.style.display = 'block';
+        pickerList.forEach(v => {
+          let personName = v.title || (v.extraPerk ? v.extraPerk.split('-')[0].trim() : 'Görevli');
+          let personDesc = v.extraPerk ? (v.extraPerk.includes('-') ? v.extraPerk.split('-').slice(1).join('-').trim() : v.extraPerk) : `Türkiye ${v.rank}.'si`;
+          let avatarUrl = getAvatarUrl(personName, v.photo);
+          
+          const card = document.createElement('div');
+          card.className = 'hof-card';
+          card.innerHTML = `
+            <div style="position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; z-index: 20;">
+              <button class="hof-edit" onclick="editVictory('${v.id}')" title="Kaydı Düzenle"><i data-lucide="edit" style="width: 16px; height: 16px;"></i></button>
+              <button class="hof-delete" onclick="deleteVictory('${v.id}')" title="Kaydı Sil"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
+            </div>
+            <div class="hof-img-wrapper">
+              <i data-lucide="crown" class="hof-crown"></i>
+              <img src="${avatarUrl}" class="hof-img" alt="${personName}" onerror="this.src=getAvatarUrl('${personName}', '')">
+              <div class="hof-rank-badge"><i data-lucide="zap" style="width: 12px; height: 12px; display:inline-block; vertical-align:middle; margin-right:4px;"></i>${v.rank}. Sıra</div>
+            </div>
+            <div class="hof-name">${personName}</div>
+            <div class="hof-desc">${personDesc}</div>
+            <div class="hof-date"><i data-lucide="calendar" style="width: 13px; height: 13px;"></i> ${v.date}</div>
+          `;
+          hofGrid.appendChild(card);
+        });
+      } else {
+        hofSection.style.display = 'none';
+      }
+
+      // 2. TÜM KARTLARI (PICKER DAHİL) AŞAĞIDAKİ ANA TABLODA LİSTELE
+      const grid = document.getElementById('victoriesGrid');
+      grid.innerHTML = '';
+      let list = victoriesList.filter(v => {
+        if (currentFilter === 'KUPON') return v.rewardType === 'KUPON';
+        if (currentFilter === 'TICKET') return v.rewardType === 'TICKET';
+        if (currentFilter === 'CHALLENGE') return v.category === 'CHALLENGE';
+        if (currentFilter === 'FIRIN') return v.category === 'FIRIN';
+        if (currentFilter === 'PICKER') return v.category === 'PICKER';
+        if (currentFilter === 'FUF') return v.category === 'FUF';
+        if (currentFilter === 'RANK_1') return v.rank === 1;
+        return true;
+      });
+
+      if (searchQuery.trim() !== '') {
+        const q = searchQuery.toLowerCase();
+        list = list.filter(v => 
+          (v.title && v.title.toLowerCase().includes(q)) || 
+          (v.category && v.category.toLowerCase().includes(q)) ||
+          (v.date && v.date.toLowerCase().includes(q)) ||
+          (v.extraPerk && v.extraPerk.toLowerCase().includes(q))
+        );
+      }
+
+      if (list.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);"><i data-lucide="info" style="width: 40px; height: 40px; margin-bottom: 10px; opacity: 0.5;"></i><p>Kayıt bulunamadı.</p></div>`;
+        return;
+      }
+
+      list.forEach(v => {
+        const card = document.createElement('div');
+        card.className = `victory-card rank-${v.rank} category-${v.category}`;
+
+        let rankClass = 'r-other'; 
+        let rankBadgeText = `${v.rank}. Sıra`;
+        
+        if (v.category === 'PICKER') {
+          rankClass = 'r-picker';
+          rankBadgeText = `${v.rank}. Sıra (Türkiye Top 10) ⚡`;
+        } else if (v.category === 'FIRIN') {
+          rankClass = 'r-firin';
+          rankBadgeText = `${v.rank}. Sıra (Türkiye Top 5) 🥖`;
+        } else if (v.category === 'FUF') {
+          rankClass = 'r-fuf';
+          rankBadgeText = `${v.rank}. Sıra (Türkiye Top 5) 🥬`;
+        } else if (v.rank === 1) { 
+          rankClass = 'r-1'; rankBadgeText = `1. Sıra (Şampiyon) 🏆`; 
+        } else if (v.rank === 2) { 
+          rankClass = 'r-2'; rankBadgeText = `2. Sıra (Gümüş Kupa) 🥈`; 
+        } else if (v.rank === 3) { 
+          rankClass = 'r-3'; rankBadgeText = `3. Sıra (Bronz Kupa) 🥉`; 
+        }
+
+        let rewardBadgeHtml = '';
+        if (v.rewardType === 'KUPON') {
+          rewardBadgeHtml = `<div class="reward-box type-coupon"><i data-lucide="receipt" style="width: 16px; height: 16px;"></i><span>${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ Kupon</span></div>`;
+        } else if (v.rewardType === 'TICKET') {
+          rewardBadgeHtml = `<div class="reward-box type-ticket"><i data-lucide="credit-card" style="width: 16px; height: 16px;"></i><span>${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ Ticket</span></div>`;
+        } else if (v.category === 'FIRIN') {
+          let rText = v.rewardAmount > 0 ? `${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ Ödül & Fırın Derecesi` : `Fırın Derecesi (Top 5)`;
+          rewardBadgeHtml = `<div class="reward-box type-firin"><i data-lucide="flame" style="width: 16px; height: 16px;"></i><span>${rText}</span></div>`;
+        } else if (v.category === 'PICKER') {
+          let rText = v.rewardAmount > 0 ? `${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ Ödül & Yıldız Görevli` : `Ayın Yıldız Görevlisi`;
+          rewardBadgeHtml = `<div class="reward-box type-picker"><i data-lucide="zap" style="width: 16px; height: 16px;"></i><span>${rText}</span></div>`;
+        } else if (v.category === 'FUF') {
+          let rText = v.rewardAmount > 0 ? `${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ Ödül & F/UF Derecesi` : `F/UF Performans Derecesi`;
+          rewardBadgeHtml = `<div class="reward-box type-fuf"><i data-lucide="leaf" style="width: 16px; height: 16px;"></i><span>${rText}</span></div>`;
+        } else {
+          rewardBadgeHtml = `<div class="reward-box type-trophy"><i data-lucide="trophy" style="width: 16px; height: 16px;"></i><span>${v.rank === 1 ? 'Altın Kupa 🏆' : (v.rank === 2 ? 'Gümüş Kupa 🥈' : 'Bronz Kupa 🥉')}</span></div>`;
+        }
+
+        let displayCatName = v.category === "FUF" ? "F/UF PERFORMANSI" : (v.category === "PICKER" ? "DMART GÖREVLİSİ" : v.category.replace('_', ' '));
+        
+        card.innerHTML = `
+          <div>
+            <div class="card-top">
+              <span class="category-tag">${displayCatName}</span>
+              <span class="rank-pill ${rankClass}">${rankBadgeText}</span>
+            </div>
+            <div class="card-title">${v.title}</div>
+            <div class="card-date"><i data-lucide="calendar" style="width: 13px; height: 13px;"></i> ${v.date}</div>
+            ${v.extraPerk ? `<div style="font-size: 13px; color: #e2e8f0; margin-bottom: 12px; font-weight: 600;">${v.extraPerk}</div>` : ''}
+          </div>
+          <div class="card-footer">
+            ${rewardBadgeHtml}
+            <div style="display: flex; gap: 8px;">
+                <button class="edit-btn" onclick="editVictory('${v.id}')" title="Kaydı Düzenle"><i data-lucide="edit" style="width: 15px; height: 15px;"></i></button>
+                <button class="delete-btn" onclick="deleteVictory('${v.id}')" title="Kaydı Sil"><i data-lucide="trash-2" style="width: 15px; height: 15px;"></i></button>
+              </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterBy(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderVictories();
+      lucide.createIcons();
+    }
+
+    function handleSearch() { 
+      searchQuery = document.getElementById('searchInput').value; 
+      renderVictories(); 
+      lucide.createIcons(); 
+    }
+
+    function openModal() { 
+      document.getElementById('modalOverlay').style.display = 'flex'; 
+      handleCategoryChange(document.getElementById('fCategory').value); 
+    }
+
+    function closeModal() { 
+      document.getElementById('modalOverlay').style.display = 'none'; 
+      document.getElementById('addForm').reset(); 
+      uploadedPhotoBase64 = ''; 
+      if (document.getElementById('fPhotoFile')) document.getElementById('fPhotoFile').value = '';
+      editingId = null;
+      document.getElementById('modalTitle').innerHTML = '<i data-lucide="plus-circle" style="color: var(--primary);"></i> Yeni Başarı & Derece Ekle';
+    }
+
+    function handlePhotoFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedPhotoBase64 = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleCategoryChange(cat) {
+      const rankSelect = document.getElementById('fRank');
+      const photoGroup = document.getElementById('photoGroup');
+      const lblTitle = document.getElementById('lblTitle');
+      const fTitle = document.getElementById('fTitle');
+      const lblDate = document.getElementById('lblDate');
+      const fDate = document.getElementById('fDate');
+      const lblExtra = document.getElementById('lblExtraPerk');
+      const extraInput = document.getElementById('fExtraPerk');
+      const rInput = document.getElementById('fRewardAmount');
+      const rLabel = document.getElementById('lblRewardType');
+
+      // 1. Sıralama Seçeneklerini Dinamik Olarak Doldur (Picker için 1-10, diğerleri için 1-5)
+      rankSelect.innerHTML = '';
+      if (cat === 'PICKER') {
+        for (let i = 1; i <= 10; i++) {
+          let opt = document.createElement('option');
+          opt.value = i;
+          if (i === 1) opt.innerText = "1. Sıra (Türkiye Şampiyonu 🏆)";
+          else if (i === 2) opt.innerText = "2. Sıra (Türkiye 2.'si 🥈)";
+          else if (i === 3) opt.innerText = "3. Sıra (Türkiye 3.'sü 🥉)";
+          else opt.innerText = `${i}. Sıra (Türkiye Top 10 ⚡)`;
+          rankSelect.appendChild(opt);
+        }
+        photoGroup.style.display = 'block';
+        lblTitle.innerText = "Görevli Adı Soyadı";
+        fTitle.placeholder = "Örn: Burcu Meşe veya Mehmet Yiğit";
+        lblDate.innerText = "Hangi Ay / Dönem?";
+        fDate.placeholder = "Örn: Temmuz Dönemi";
+        lblExtra.innerText = "Görevli Başarı Notu";
+        rLabel.innerText = "Ödül Tutarı (Varsa ₺)";
+        rInput.value = 0;
+      } else {
+        for (let i = 1; i <= 5; i++) {
+          let opt = document.createElement('option');
+          opt.value = i;
+          if (i === 1) opt.innerText = "1. Sıra (Şampiyon 🏆)";
+          else if (i === 2) opt.innerText = "2. Sıra (İkincilik 🥈)";
+          else if (i === 3) opt.innerText = "3. Sıra (Üçüncülük 🥉)";
+          else opt.innerText = `${i}. Sıra (Derece)`;
+          rankSelect.appendChild(opt);
+        }
+        photoGroup.style.display = 'none';
+        document.getElementById('fPhoto').value = '';
+        if (document.getElementById('fPhotoFile')) document.getElementById('fPhotoFile').value = '';
+        uploadedPhotoBase64 = '';
+
+        if (cat === 'LİG') {
+          lblTitle.innerText = "Lig Haftası Numarası";
+          fTitle.placeholder = "Sadece hafta rakamı yazın (Örn: 13)...";
+          lblDate.innerText = "Tarih / Hafta Notu";
+          fDate.placeholder = "Örn: DMART Ligi 13. Hafta";
+          rLabel.innerText = "Kupon Tutarı (₺)";
+        } else if (cat === 'CHALLENGE') {
+          lblTitle.innerText = "Challenge Tur Numarası";
+          fTitle.placeholder = "Sadece tur rakamı yazın (Örn: 45)...";
+          lblDate.innerText = "Tur Dönemi";
+          fDate.placeholder = "Örn: 45. Tur";
+          rLabel.innerText = "Ödül Tutarı (Varsa ₺)";
+          rInput.value = 0;
+        } else if (cat === 'AYIN_DEPOSU') {
+          lblTitle.innerText = "Dönem Başlığı";
+          fTitle.placeholder = "Örn: Ayın En İyi 5 DMART'ı - Ekim";
+          lblDate.innerText = "Hangi Ay? / Dönem";
+          fDate.placeholder = "Örn: Ekim Dönemi";
+          rLabel.innerText = "Ticket Tutarı (₺)";
+        } else if (cat === 'FIRIN') {
+          lblTitle.innerText = "Dönem Başlığı";
+          fTitle.placeholder = "Örn: Ayın Fırın Performansı İyi 5 DMART'ı";
+          lblDate.innerText = "Hangi Ay? / Dönem";
+          fDate.placeholder = "Örn: Ekim Dönemi";
+          rLabel.innerText = "Ödül Tutarı (Varsa ₺)";
+          rInput.value = 0;
+        } else if (cat === 'FUF') {
+          lblTitle.innerText = "Dönem Başlığı";
+          fTitle.placeholder = "Örn: Ayın F/UF Performansı İyi 5 DMART'ı";
+          lblDate.innerText = "Hangi Ay? / Dönem";
+          fDate.placeholder = "Örn: Ekim Dönemi";
+          rLabel.innerText = "Ödül Tutarı (Varsa ₺)";
+          rInput.value = 0;
+        }
+      }
+      autoFillReward();
+    }
+
+    function autoFillReward() {
+      const cat = document.getElementById('fCategory').value;
+      const rank = Number(document.getElementById('fRank').value);
+      const rInput = document.getElementById('fRewardAmount');
+      const extraInput = document.getElementById('fExtraPerk');
+      const titleVal = document.getElementById('fTitle').value.trim();
+
+      if (cat === 'LİG') {
+        if (rank === 1) rInput.value = 1250; 
+        else if (rank === 2) rInput.value = 1050; 
+        else if (rank === 3) rInput.value = 850; 
+        else rInput.value = 500;
+        extraInput.value = `Şampiyonlar Ligi ${rank}.'si`;
+      } 
+      else if (cat === 'AYIN_DEPOSU') {
+        if (rank === 1) rInput.value = 3000; 
+        else if (rank === 2) rInput.value = 2500; 
+        else if (rank === 3) rInput.value = 2000; 
+        else if (rank === 4) rInput.value = 1500; 
+        else if (rank === 5) rInput.value = 1000;
+        extraInput.value = "🎳 Bowling Organizasyonu";
+      } 
+      else if (cat === 'FIRIN') {
+        rInput.value = (rank <= 5) ? 600 : 0;
+        extraInput.value = `🥖 Balçova - Türkiye ${rank}.'si (nSFR * Satış * Fire)`;
+      }
+      else if (cat === 'PICKER') {
+        rInput.value = 0;
+        let pName = titleVal || "Görevli";
+        extraInput.value = `${pName} - Türkiye ${rank}.'si (nSFR * Prep Time * Putaway)`;
+      }
+      else if (cat === 'FUF') {
+        rInput.value = (rank <= 5) ? 600 : 0;
+        extraInput.value = `🥬 Balçova - Türkiye ${rank}.'si (nSFR * Satış * Fire - F/UF Ürünler)`;
+      }
+      else {
+        rInput.value = 0;
+        if (rank === 1) extraInput.value = "B Grubu 1.'si (Altın Kupa 🏆)";
+        else if (rank === 2) extraInput.value = "B Grubu 2.'si (Gümüş Kupa 🥈)";
+        else if (rank === 3) extraInput.value = "B Grubu 3.'sü (Bronz Kupa 🥉)";
+        else extraInput.value = `B Grubu ${rank}.'si`;
+      }
+      
+      smartFillTitle();
+    }
+
+    function smartFillTitle() {
+      const cat = document.getElementById('fCategory').value;
+      const rank = Number(document.getElementById('fRank').value);
+      const titleInput = document.getElementById('fTitle');
+      const extraInput = document.getElementById('fExtraPerk');
+      const dateInput = document.getElementById('fDate');
+      let tVal = titleInput.value.trim();
+      
+      if (!tVal) return;
+
+      if (cat === 'PICKER') {
+        extraInput.value = `${tVal} - Türkiye ${rank}.'si (nSFR * Prep Time * Putaway)`;
+        return;
+      }
+
+      let numMatch = tVal.match(/^(\d+)$/);
+      let baseVal = numMatch ? numMatch[1] : null;
+      
+      if (baseVal) {
+        if (cat === 'LİG') {
+          titleInput.value = `DMART Ligi ${baseVal}. Hafta ${rank === 1 ? 'Zaferi' : 'Sıralaması'}`;
+          if (!dateInput.value) dateInput.value = `DMART Ligi ${baseVal}. Hafta`;
+        } else if (cat === 'CHALLENGE') {
+          titleInput.value = `${baseVal}. Tur Challenge ${rank === 1 ? 'Zaferi' : 'Sıralaması'}`;
+          if (!dateInput.value) dateInput.value = `${baseVal}. Tur`;
+        } else if (cat === 'AYIN_DEPOSU' || cat === 'FIRIN' || cat === 'FUF') {
+          const aylar = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+          let ayIsmi = Number(baseVal) >= 1 && Number(baseVal) <= 12 ? aylar[Number(baseVal)-1] : baseVal + ". Ay";
+          if (cat === 'AYIN_DEPOSU') titleInput.value = `Ayın En İyi 5 DMART'ı - ${ayIsmi}`;
+          if (cat === 'FIRIN') titleInput.value = `Ayın Fırın Performansı İyi 5 DMART'ı - ${ayIsmi}`;
+          if (cat === 'FUF') titleInput.value = `Ayın F/UF Performansı İyi 5 DMART'ı - ${ayIsmi}`;
+          if (!dateInput.value) dateInput.value = `${ayIsmi} Dönemi`;
+        }
+      }
+    }
+
+    function saveVictory(e) {
+      e.preventDefault();
+      const cat = document.getElementById('fCategory').value;
+      let rType = 'KUPA'; 
+      if (cat === 'LİG') rType = 'KUPON'; 
+      if (cat === 'AYIN_DEPOSU') rType = 'TICKET';
+      if (cat === 'PICKER') rType = 'PICKER';
+      if (cat === 'FIRIN') rType = 'FIRIN';
+      if (cat === 'FUF') rType = 'FUF';
+
+      const newEntry = {
+        id: editingId ? editingId : "v_" + Date.now(),
+        category: cat,
+        rank: Number(document.getElementById('fRank').value),
+        title: document.getElementById('fTitle').value.trim(),
+        rewardType: rType,
+        rewardAmount: Number(document.getElementById('fRewardAmount').value) || 0,
+        extraPerk: document.getElementById('fExtraPerk').value.trim(),
+        date: document.getElementById('fDate').value.trim() || "Yeni Kayıt",
+        photo: uploadedPhotoBase64 || (document.getElementById('fPhoto') ? document.getElementById('fPhoto').value.trim() : '')
+      };
+
+      if (editingId) {
+        const index = victoriesList.findIndex(v => v.id === editingId);
+        if (index !== -1) victoriesList[index] = newEntry;
+        editingId = null;
+        showToast("Kayıt başarıyla güncellendi.");
+      } else {
+        victoriesList.unshift(newEntry);
+        showToast("Yeni derece panoya başarıyla eklendi.");
+      }
+
+      localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
+      closeModal(); 
+      renderStats(); 
+      renderVictories(); 
+      if (!editingId) triggerConfetti(); 
+    }
+
+    function deleteVictory(id) {
+      const pass = prompt("Bu kaydı silmek için yönetici şifresini girin:");
+      if (pass === "Balcova35") {
+        victoriesList = victoriesList.filter(v => v.id !== id);
+        localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
+        renderStats(); 
+        renderVictories(); 
+        showToast("Kayıt başarıyla silindi.");
+      } else if (pass !== null) {
+        alert("Hatalı şifre! Silme işlemi iptal edildi.");
+      }
+    }
+
+    function triggerConfetti() { 
+      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#ea004b', '#ffb800', '#38bdf8', '#8b5cf6', '#10b981'] }); 
+    }
+
+    function showToast(msg) { 
+      const t = document.getElementById('toast'); 
+      t.innerText = msg; 
+      t.style.display = 'block'; 
+      setTimeout(() => { t.style.display = 'none'; }, 3000); 
+    }
+
+    // -----------------------------------------------------
+    // TAB NAVIGATION
+    // -----------------------------------------------------
+    function switchMainTab(tabId, btn) {
+      document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    // -----------------------------------------------------
+    // TAB 2: NSFR / KPI REPORT ANALYSIS JS (SheetJS + ChartJS)
+    // -----------------------------------------------------
+    let chartIssue = null;
+    let chartCat = null;
+
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const firstSheetName = workbook.SheetNames[0];
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName]);
+        
+        processNsfrData(rows);
+        document.getElementById('nsfrDashboard').style.display = 'block';
+        showToast("Rapor başarıyla yüklendi ve analiz edildi.");
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function processNsfrData(rows) {
+      let totalCost = 0;
+      let issueCounts = {};
+      let catCounts = {};
+      let productStats = {};
+
+      rows.forEach(row => {
+        // Balçova filtresi (opsiyonel, genelde dosya zaten balçovadır)
+        // if(row['Store'] && !row['Store'].includes('Balçova')) return;
+
+        let cost = parseFloat(row['Refund & Comp']) || 0;
+        totalCost += cost;
+
+        let issue = row['CCR3'] || 'Belirtilmemiş';
+        issueCounts[issue] = (issueCounts[issue] || 0) + 1;
+
+        let cat = row['Category L1'] || 'Bilinmeyen Kategori';
+        catCounts[cat] = (catCounts[cat] || 0) + 1;
+
+        let prod = row['Product Name'];
+        if(prod) {
+          if(!productStats[prod]) productStats[prod] = { cat: cat, count: 0, cost: 0 };
+          productStats[prod].count += 1;
+          productStats[prod].cost += cost;
+        }
+      });
+
+      // Update Summary Cards
+      document.getElementById('nsfrTotalIssues').innerText = rows.length;
+      document.getElementById('nsfrTotalCost').innerText = totalCost.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ₺';
+      
+      const topIssue = Object.keys(issueCounts).sort((a,b) => issueCounts[b] - issueCounts[a])[0];
+      document.getElementById('nsfrTopIssue').innerText = topIssue || '-';
+
+      // Charts
+      drawCharts(issueCounts, catCounts);
+
+      // Table (Top 10 SKUs by issue count)
+      const topProducts = Object.entries(productStats)
+        .map(([name, data]) => ({ name, ...data }))
+        .sort((a,b) => b.count - a.count)
+        .slice(0, 10);
+
+      const tbody = document.getElementById('skuTableBody');
+      tbody.innerHTML = '';
+      topProducts.forEach(p => {
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-weight:600; color:#fff;">${p.name}</td>
+            <td>${p.cat}</td>
+            <td><span style="background: rgba(234,0,75,0.2); color:var(--primary-light); padding:2px 8px; border-radius:10px; font-weight:bold;">${p.count} Hata</span></td>
+            <td style="color:#fde047;">${p.cost.toFixed(2)} ₺</td>
+          </tr>
+        `;
+      });
+    }
+
+    function drawCharts(issueCounts, catCounts) {
+      Chart.defaults.color = '#94a3b8';
+      Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+      // Issue Chart
+      const ctxIssue = document.getElementById('issueChart').getContext('2d');
+      if (chartIssue) chartIssue.destroy();
+      chartIssue = new Chart(ctxIssue, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(issueCounts),
+          datasets: [{
+            data: Object.values(issueCounts),
+            backgroundColor: ['#ea004b', '#ffb800', '#38bdf8', '#8b5cf6', '#10b981', '#f43f5e', '#64748b'],
+            borderWidth: 2,
+            borderColor: '#0f1117'
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'right' } }
+        }
+      });
+
+      // Category Chart
+      const ctxCat = document.getElementById('catChart').getContext('2d');
+      if (chartCat) chartCat.destroy();
+      
+      const sortedCats = Object.entries(catCounts).sort((a,b)=>b[1]-a[1]).slice(0,7);
+      
+      chartCat = new Chart(ctxCat, {
+        type: 'bar',
+        data: {
+          labels: sortedCats.map(c => c[0]),
+          datasets: [{
+            label: 'Hata Sayısı',
+            data: sortedCats.map(c => c[1]),
+            backgroundColor: '#ea004b',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+            x: { grid: { display: false } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    
+    const historicData = [{"month": "Oca", "pfr": 0.034, "refund": 1.02, "comp": 0.09, "nsfr": 1.14}, {"month": "\u015eub", "pfr": 0.009, "refund": 1.25, "comp": 0.27, "nsfr": 1.54}, {"month": "Mar", "pfr": 0.084, "refund": 0.87, "comp": 0.19, "nsfr": 1.14}, {"month": "Nis", "pfr": 0.007, "refund": 0.82, "comp": 0.33, "nsfr": 1.15}, {"month": "May", "pfr": 0.014, "refund": 0.68, "comp": 0.17, "nsfr": 0.87}, {"month": "Haz", "pfr": 0.022, "refund": 0.65, "comp": 0.08, "nsfr": 0.75}, {"month": "Tem", "pfr": 0.0, "refund": 0.69, "comp": 0.16, "nsfr": 0.86}, {"month": "A\u011fu", "pfr": 0.016, "refund": 0.76, "comp": 0.22, "nsfr": 0.99}, {"month": "Eyl", "pfr": 0.024, "refund": 0.6, "comp": 0.08, "nsfr": 0.71}, {"month": "Eki", "pfr": 0.015, "refund": 0.65, "comp": 0.07, "nsfr": 0.73}];
+    
+    function drawMonthlyTrend() {
+      const ctx = document.getElementById('monthlyTrendChart').getContext('2d');
+      Chart.defaults.color = '#94a3b8';
+      Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: historicData.map(d => d.month),
+          datasets: [
+            {
+              label: 'n-SFR (%)',
+              data: historicData.map(d => d.nsfr),
+              borderColor: '#ea004b',
+              backgroundColor: 'rgba(234, 0, 75, 0.1)',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Refund Rate (%)',
+              data: historicData.map(d => d.refund),
+              borderColor: '#ffb800',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.4,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Compensation Only Rate (%)',
+              data: historicData.map(d => d.comp),
+              borderColor: '#38bdf8',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.4,
+              yAxisID: 'y'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: { display: true, text: 'Oran (%)', color: '#94a3b8' },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.parsed.y + '%';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Call drawMonthlyTrend inside init()
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
