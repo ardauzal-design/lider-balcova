@@ -518,10 +518,6 @@
     .edit-btn { background: transparent; border: none; color: #38bdf8; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; }
     .edit-btn:hover { opacity: 1; }
 
-
-
-
-
     /* VICTORIES GRID & FILTER */
     .filters-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
     .filter-tabs { display: flex; gap: 8px; background: rgba(255, 255, 255, 0.04); padding: 6px; border-radius: 14px; border: 1px solid var(--card-border); flex-wrap: wrap; }
@@ -686,13 +682,13 @@
   </style>
 </head>
 <body>
-  <!-- MÜZİK VE SES EFEKTİ (mp3 linkini kendi istediğiniz bir müzikle değiştirebilirsiniz) -->
+  <!-- MÜZİK VE SES EFEKTİ -->
   <audio id="champMusic" loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_29ae0755ee.mp3?filename=champion-80bpm-123078.mp3" type="audio/mpeg">
     <source src="https://actions.google.com/sounds/v1/crowds/crowd_loud_cheer.ogg" type="audio/ogg">
   </audio>
 
-  <!-- GİRİŞ EKRANI (Tarayıcıların otomatik müzik çalmayı engellemesini aşmak için) -->
+  <!-- GİRİŞ EKRANI -->
   <div id="welcomeOverlay">
     <i data-lucide="trophy" style="width: 80px; height: 80px; color: var(--gold); margin-bottom: 20px;"></i>
     <h1 style="font-size: 32px; font-weight: 900; text-align: center; margin-bottom: 10px;">Yemeksepeti Market Balçova</h1>
@@ -703,7 +699,6 @@
   <button id="musicToggleBtn" onclick="toggleMusic()" title="Müziği Kapat/Aç">
     <i data-lucide="volume-2" id="volIcon" style="width: 20px; height: 20px;"></i>
   </button>
-
 
   <div class="container">
     <header>
@@ -726,7 +721,6 @@
         </button>
       </div>
     </header>
-
 
     <!-- HALL OF FAME (PICKER) BÖLÜMÜ -->
     <div class="hall-of-fame-section" id="hallOfFameSection" style="display: none;">
@@ -840,11 +834,8 @@
       <div class="victories-grid" id="victoriesGrid"></div>
     </div>
 
-    
     <!-- TAB 2: NSFR / KPI ANALİZİ -->
     <div id="tab-nsfr" class="tab-content">
-      
-      <!-- YENİ: 2026 AYLIK TREND GRAFİĞİ (SABİT VERİ) -->
       <div class="table-container" style="margin-bottom: 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <h3><i data-lucide="trending-down" style="width:18px; height:18px; vertical-align:middle; color:var(--primary);"></i> 2026 Yılı Aylık nSFR ve İade (Refund/Comp) Trendi</h3>
@@ -855,7 +846,6 @@
         </div>
       </div>
 
-      <!-- DETAYLI SKu / CCR3 ANALİZİ İÇİN DOSYA YÜKLEME ALANI -->
       <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
         <i data-lucide="file-spreadsheet" style="width: 48px; height: 48px;"></i>
         <h3>Aylık Kırılım Raporunu Yükle (.xlsx)</h3>
@@ -863,7 +853,6 @@
         <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" onchange="handleFileUpload(event)">
       </div>
 
-      <!-- YÜKLEME SONRASI AÇILAN DETAY DASHBOARD -->
       <div class="nsfr-dashboard" id="nsfrDashboard">
         <div class="stats-grid">
           <div class="stat-card">
@@ -924,80 +913,85 @@
               </tr>
             </thead>
             <tbody id="skuTableBody">
-              <!-- JS ile dolacak -->
             </tbody>
           </table>
         </div>
       </div>
     </div>
-<!-- ADD / EDIT MODAL (Sadeleştirilmiş) -->
-    <div class="modal-overlay" id="modalOverlay">
-    <div class="modal-box">
-      <h3 id="modalTitle"><i data-lucide="plus-circle" style="color: var(--primary);"></i> Yeni Başarı & Derece Ekle</h3>
-      
-      <form id="addForm" onsubmit="saveVictory(event)">
-        <div class="form-group">
-          <label>Kategori</label>
-          <select id="fCategory" required onchange="handleCategoryChange(this.value)">
-            <option value="LİG">DMART Ligi (Kupon Ödülü)</option>
-            <option value="AYIN_DEPOSU">Ayın En İyi 5 DMART'ı (Ticket Ödülü)</option>
-            <option value="CHALLENGE">Challenge Zaferi (Kupa)</option>
-            <option value="FIRIN">Ayın Fırın Performansı (Fırın Derecesi 🥖)</option>
-            <option value="PICKER">Ayın En İyi 10 DMART Görevlisi (Picker ⚡)</option>
-            <option value="FUF">Ayın F/UF Performansı (F/UF Derecesi 🥬🍎)</option>
-          </select>
-        </div>
 
-        <div class="form-row">
+    <!-- ADD / EDIT MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box">
+        <h3 id="modalTitle"><i data-lucide="plus-circle" style="color: var(--primary);"></i> Yeni Başarı & Derece Ekle</h3>
+        
+        <form id="addForm" onsubmit="saveVictory(event)">
           <div class="form-group">
-            <label>Kaçıncı Oldunuz? (Sıralama)</label>
-            <select id="fRank" required onchange="autoFillReward()">
-              <!-- JS dinamik dolduracak -->
+            <label>Kategori</label>
+            <select id="fCategory" required onchange="handleCategoryChange(this.value)">
+              <option value="LİG">DMART Ligi (Kupon Ödülü)</option>
+              <option value="AYIN_DEPOSU">Ayın En İyi 5 DMART'ı (Ticket Ödülü)</option>
+              <option value="CHALLENGE">Challenge Zaferi (Kupa)</option>
+              <option value="FIRIN">Ayın Fırın Performansı (Fırın Derecesi 🥖)</option>
+              <option value="PICKER">Ayın En İyi 10 DMART Görevlisi (Picker ⚡)</option>
+              <option value="FUF">Ayın F/UF Performansı (F/UF Derecesi 🥬🍎)</option>
             </select>
           </div>
-          <div class="form-group">
-            <label id="lblTitle">Hafta / Tur / Başlık</label>
-            <input type="text" id="fTitle" placeholder="Örn: 13" required oninput="smartFillTitle()" onblur="smartFillTitle()">
-          </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label id="lblDate">Hangi Ay? / Dönem / Tarih</label>
-            <input type="text" id="fDate" placeholder="Örn: Temmuz Dönemi" required>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Kaçıncı Oldunuz? (Sıralama)</label>
+              <select id="fRank" required onchange="autoFillReward()">
+              </select>
+            </div>
+            <div class="form-group">
+              <label id="lblTitle">Hafta / Tur / Başlık</label>
+              <input type="text" id="fTitle" placeholder="Örn: 13" required oninput="smartFillTitle()" onblur="smartFillTitle()">
+            </div>
           </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label id="lblDate">Hangi Ay? / Dönem / Tarih</label>
+              <input type="text" id="fDate" placeholder="Örn: Temmuz Dönemi" required>
+            </div>
+            <div class="form-group">
+              <label id="lblRewardType">Ödül Cinsi (Kupon / Ticket)</label>
+              <select id="fRewardType" onchange="autoFillReward()">
+                <option value="KUPON">Kupon Ödülü (₺)</option>
+                <option value="TICKET">Ticket Ödülü (₺)</option>
+                <option value="KUPA">Sadece Kupa / Madalya (₺ Yok)</option>
+              </select>
+            </div>
+          </div>
+
           <div class="form-group">
-            <label id="lblRewardType">Ödül Tutarı (Varsa ₺)</label>
+            <label>Ödül Tutarı (Varsa ₺)</label>
             <input type="number" id="fRewardAmount" placeholder="0" value="0">
           </div>
-        </div>
 
-        <div class="form-group">
-          <label id="lblExtraPerk">Kazanılan Başarı / Ekstra Not</label>
-          <input type="text" id="fExtraPerk" placeholder="Örn: Şampiyonlar Ligi 1.'si">
-        </div>
-        
-        <div class="form-group photo-group" id="photoGroup" style="display: none;">
-          <label><i data-lucide="camera" style="width:14px; height:14px; vertical-align:middle;"></i> Görevli Fotoğrafı (Galeriden / Bilgisayardan Seçin)</label>
-          <input type="file" id="fPhotoFile" accept="image/*" style="margin-bottom:6px;" onchange="handlePhotoFile(event)">
-          <input type="text" id="fPhoto" placeholder="Veya internetten resim linki yapıştırın...">
-        </div>
+          <div class="form-group">
+            <label id="lblExtraPerk">Kazanılan Başarı / Ekstra Not</label>
+            <input type="text" id="fExtraPerk" placeholder="Örn: Şampiyonlar Ligi 1.'si">
+          </div>
+          
+          <div class="form-group photo-group" id="photoGroup" style="display: none;">
+            <label><i data-lucide="camera" style="width:14px; height:14px; vertical-align:middle;"></i> Görevli Fotoğrafı (Galeriden / Bilgisayardan Seçin)</label>
+            <input type="file" id="fPhotoFile" accept="image/*" style="margin-bottom:6px;" onchange="handlePhotoFile(event)">
+            <input type="text" id="fPhoto" placeholder="Veya internetten resim linki yapıştırın...">
+          </div>
 
-        <div class="modal-actions">
-          <button type="button" class="btn btn-outline" onclick="closeModal()">İptal</button>
-          <button type="submit" class="btn btn-primary">Kaydet & Panoya Ekle</button>
-        </div>
-      </form>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" onclick="closeModal()">İptal</button>
+            <button type="submit" class="btn btn-primary">Kaydet & Panoya Ekle</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <div id="toast"></div>
+    <div id="toast"></div>
 
-  <script>
-    
-    // -----------------------------------------------------
+    <script>
     // MUSIC & WELCOME OVERLAY JS
-    // -----------------------------------------------------
     const music = document.getElementById('champMusic');
     const volIcon = document.getElementById('volIcon');
     let isMusicPlaying = false;
@@ -1008,7 +1002,6 @@
         document.getElementById('welcomeOverlay').style.display = 'none';
       }, 500);
       
-      // Müzik Çal ve Konfeti Patlat
       music.volume = 0.5;
       music.play().then(() => {
         isMusicPlaying = true;
@@ -1016,7 +1009,6 @@
         lucide.createIcons();
       }).catch(e => console.log("Müzik çalma engellendi: ", e));
       
-      // Çoklu konfeti şöleni
       triggerConfetti();
       setTimeout(triggerConfetti, 1000);
       setTimeout(triggerConfetti, 2500);
@@ -1034,251 +1026,248 @@
       lucide.createIcons();
     }
 
-    // -----------------------------------------------------
     // TAB 1: ŞAMPİYONLAR PANOSU JS
-    // -----------------------------------------------------
     const INITIAL_VICTORIES = [
       {
-            "id": "v_picker_temmuz_1",
-            "title": "Burcu Meşe",
-            "category": "PICKER",
-            "rank": 1,
-            "date": "Temmuz Dönemi",
-            "rewardType": "PICKER",
-            "rewardAmount": 0,
-            "extraPerk": "Burcu Meşe - Türkiye 1.'si (nSFR * Prep Time * Putaway)",
-            "photo": ""
+        "id": "v_picker_temmuz_1",
+        "title": "Burcu Meşe",
+        "category": "PICKER",
+        "rank": 1,
+        "date": "Temmuz Dönemi",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "Burcu Meşe - Türkiye 1.'si (nSFR * Prep Time * Putaway)",
+        "photo": ""
       },
       {
-            "id": "v_picker_temmuz_4",
-            "title": "Mehmet Yiğit Arslan",
-            "category": "PICKER",
-            "rank": 4,
-            "date": "Temmuz Dönemi",
-            "rewardType": "PICKER",
-            "rewardAmount": 0,
-            "extraPerk": "Mehmet Yiğit Arslan - Türkiye 4.'sü (nSFR * Prep Time * Putaway)",
-            "photo": "data:image/jpeg;base64,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"
+        "id": "v_picker_temmuz_4",
+        "title": "Mehmet Yiğit Arslan",
+        "category": "PICKER",
+        "rank": 4,
+        "date": "Temmuz Dönemi",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "Mehmet Yiğit Arslan - Türkiye 4.'sü (nSFR * Prep Time * Putaway)",
+        "photo": "data:image/jpeg;base64,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"
       },
       {
-            "id": "v_picker_temmuz_5",
-            "title": "Gökhan Çalık",
-            "category": "PICKER",
-            "rank": 5,
-            "date": "Temmuz Dönemi",
-            "rewardType": "PICKER",
-            "rewardAmount": 0,
-            "extraPerk": "Gökhan Çalık - Türkiye 5.'si (nSFR * Prep Time * Putaway)",
-            "photo": ""
+        "id": "v_picker_temmuz_5",
+        "title": "Gökhan Çalık",
+        "category": "PICKER",
+        "rank": 5,
+        "date": "Temmuz Dönemi",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "Gökhan Çalık - Türkiye 5.'si (nSFR * Prep Time * Putaway)",
+        "photo": ""
       },
       {
-            "id": "v_picker_ekim_9",
-            "title": "Mehmet Yiğit Aslan",
-            "category": "PICKER",
-            "rank": 9,
-            "date": "Ekim Dönemi",
-            "rewardType": "PICKER",
-            "rewardAmount": 0,
-            "extraPerk": "Mehmet Yiğit Aslan - Türkiye 9.'su (nSFR * Prep Time * Putaway)",
-            "photo": "data:image/jpeg;base64,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"
+        "id": "v_picker_ekim_9",
+        "title": "Mehmet Yiğit Aslan",
+        "category": "PICKER",
+        "rank": 9,
+        "date": "Ekim Dönemi",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "Mehmet Yiğit Aslan - Türkiye 9.'su (nSFR * Prep Time * Putaway)",
+        "photo": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCADcANwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDxyirEMAcKSrOzkhVU46dSTTJYwoVk3AHI2t1Ujsa3uW8PNQ53t/X+a8yKiurTwDqU+iwara3EFzb3Mcf2ZYgxeeZiQYQvZ12sWJ4AGc1SXwT4nc3ATQ7xzbjMgVQcZXcMc85HIxnNFzEwaK7DT/h/c6lqWoWkd6IhZQW8ztLaSlmEoGAI0DNwT19OelZ994K8QWMt6v8AZ0txFZ3Bt5J4BuQuGC/L3IyQOnBODzRcDn6K3v8AhCvE32qa2/sS7M0KCR0Cg4U5x3wT8rcDJ4PHFV7zwxrmn6b/AGjd6XcQ2exJPOcDG1/unrnB7UAZNFdB4h8I3fhzStNv7m6t5Vv496pHu3L8iv3GGGGHzDjOR2q7qPgG9sraRra/tL+6gigmuLO3VxNGku3YcEYYZZQdpOMii4HJUVuyeDPEkTzo+i3QMEXnScAhUyRnOcHlSOO4x1pf+EK8TfbIbP8AsS8+0TI0iJtHKrjcSc4GMjIJBGRRcDBorWk8L69FZXV5JpN2lvasyTuyY8sqQGyOvBIyQMDNb9r8Obi6j0wf2vapPqMC3EUJtpjtVlLcuF2Zwp4zmi4HFUV0g8Da6dNiufscn2iW5FutmVxKAYvN3nsq7fXGO9Yd9Y3Wm3ktne28lvcxHDxyDBXjP8qAK9FFFAgooooAKKKKACiiigAooooAZKgkiZT3HH1rKrYPQ/SsoKcVEykbkM4QKGLqUJKsnUZ6gjuKbLIGCogbauTljySe5qKirsaOvNw5Ht/X+SOm0Lxre6BBpkVtbwv9gu5rlS7H5/NjEbKcdBjoRzk1qS/E+/kureb7BEUt7uO5iSS4dyNkTRhNx7HeT257VwtFKxkdjb/ECeLUdTupdMilXULe3gkjS6lhKiEAKQ6ENztGavS/FW9mtb1G0axWa8d2kljd0zuZWGcckjaBnI49+a4CiiyA9Svfinb2Ovte6XpVpdboYSbiQNHJ5i7iwZsZcZfGcAnA69+S1Pxnc6paahbyWcKC9t7SBmDsSgt87SPrnmuaoosFzs/E3xEufE+gnS59MggBdHMscrEgqMbQDwE7hOgPNSn4l3kNyt5YaVZWl+Vt0nut7yNMkO3amCcKDtGccn1rh6KLIDttW+JWoanDcQpZxwpJ5LJuneXy2jl83I3cctgY9AO9WdQ+Kd3qkksd5pUMthcxOl1aG6k2yFmVtynqmCowB+Oa4CiiyC52b/Ea+bw7daNHYxQRS+ckTQzyDyo5Wyy4JO/vgk9znNWLL4nXVlBpSppiGXTYUhib7dMEYKpUExZ2bvm64rhKKLIDvbf4p6hbzvMumWvmTyma7YSMpnZoRE5/2CcBuO/tXK6/rU3iDWp9SnXY0u0BPML7VUAAbjyeBWZRTsAUUUUCCiiigAooooAKKKKACiiigAPQ/Ss1WGBWieh+lZIPFRMpHX2uqWSWltb3ViZVhJLFSP3mS2Ac9hnj8amj1LSZnQTacsZJ+aTYCFAXH3R15Hp3zWVEMRgjqetTeXIIfO2P5W7Zvwdu7GcZ9cc4rS5JbfU9MQv5GmhSdwVuAVB44/n7dKxQOKvwRS3Uyw26PLK3Cog3E/QCni2n8+SAoyyxKzOjcFQoyc59AKQGbRWlHa3Myb4oJnXjlVJ6naP14+tSf2dfgTH7Hc4gIEv7tv3eRn5vTjmgZk0Vpmzu135tpxsLh8ofl2fez6YyM+mamk0nU4YpJZbC6SOMBndomAUHoSaAMaitWSwvYSRLaXEZCeYQ0bD5fX6VW3f7X60CKdFaL288cjRyRSrIg3MrKQQPUj0qSewvbWMSXFpcQoRkNJGVHXHU0DMqirzq8ZUOCpZQwzxkHofoaEV5TiMMxALfLzwBkn8qAKNFXirqqsysFfJUkcHHBxTcn1NAinRVzJ9TRk+poAp0VcyfU0ZPqaAKdFXMn1NGT6mgCnRVzJ9TRk+poAp0Vcz7/rVeYAOCO4zQBEeh+hrHHStg9D9DWQBxUTKR0Uf+qWuj0fxJFY2cdhc2UUtmpaRlwS0jnPXnABGF9gM+1cosjJ0PFO85/UflViOsk8Y3M1xbyy2kJ8k7toOAWKurHpgZ388EfKKZH4plEtqBAkUcAKoQAxQMrAkAAA/ezjgHaK5bzn9R+VHnP6j8qLAdTJ4o26sbq1sYo4UUxQxZI2x+YGA474GM/jUUPiIW7q0dkP3Oz7OGmJ2bIjGN3Hz8HPb8uK5vzn9R+VHnP6j8qLAdh/wnF+6Otxbw3BZnGZCeI3xuTjGc7Rljknvmqd54mnvI2X7NDHllYbegKymQHHcknBPfArm/Of1H5Uec/qPyosB1kfiwRCQR6bEBIzO2ZSS5YklWOPmTn7p54GSakfxrO6YawtmO52ywB+YklW6ZypI74O0DFcf5z+o/Kjzn9R+VKwHYXXjOS6jIbToQxcPu3k9CD6ck471EPFs6XMpW3U27ABUyA6kDG/cB9/HQ84rlPOf1H5Uec/qPyosFzsB4zk8sI2m27Yh8kMTkkerZByT36cYHGKyk1y4TVL6/2IZLtZFZWAYAP257Dj8qxPOf1H5Uec/qPypOKasxxk4u6NGW6D6da2gU/uXkcsT1LbeB7YUfiTVaq/nP6j8qPOf1H5VQixRVfzn9R+VHnP6j8qBFiiq/nP6j8qPOf1H5UAWKKr+c/qPyo85/UflQBYoqv5z+o/Kjzn9R+VAGjYX82nXPnwCJjtKsksYdHU9mU8EdD+AqlezSXFy00zl5ZCWdj1JJyTUfnP6j8qYSWOScmgY09D9KyR0rWPQ/SskdKiQ0dda22kT2lsJrryZySZ2JPAycbeMZ6Z/D3p7adpUYHmX7gOqmMjB3A/xYxxjHTrWZFGuwMRkmn+Wn90VoSXPs2mRzfJcJN8rbRK5CE/LjcVAIzluPUAZqw9poTq5jvNpK7V3MflbdweRyMZ57AeprL8tP7oo8tP7ooAvmw0cnaup4K4yW4VuOcHH4U2SHSxMIIm8zaZCJfM++AmVB9Mt6AdPeqXlp/dFHlp/cFAGlJZ6I8ylb0RqzAbUYkKMckkg5P+PbpQ9joYAb+0mwCF2p1PGC3I455rN8tP7opNkecbVz9aAL0llpS2ryRXpkfYxEZOCvy5HYZO7j8fasirXlp/cFHlp/cFICrRVry0/uCjy0/uCgCrW3DBo7QxmWaNX8tc4djklRu3ehBzgDrjFZEyBCCOh7VIkShRkZOO9AGiLLRCjMdSlBBA27Rk+p6d/096glt9OTzJIZ2kQRgBWIDby2O3YDJqv5af3RR5af3RTA1FtNAaUubxxGjn5CcFxvP14245qvJZaZLEjwXgjkd4x5btnaCBvJOBjBz+VU/LT+6KPLT+6KALkUWlXMRDSLbMJXIZmJJTjA9M4J/KnRWujvDKrXhSTzj5ZYnJQcAE4wCx5z2Aqj5af3RR5af3RQAupR2kV662UvmQYBBznB9M96qVa8tP7oo8pB1QUgKtFWvLT+6KPLT+6KAKtFWvLT+4KglQI3HQjNAEZ6H6Vk1rHofpWSOlRIpHQx/wCqX6VqwXNoLfThKEL29wzSq0O4OhZSAcY3AYbgnvgViJLtXBGR2p3nj+6fzqxHZG48Jy3MbTpKxaTMziNlXaFPChdvfHO0Hjp1pLaXQX0ySFpIo4lQFiYgZj+8YYGevBU4BBAGQeCK47zx/dP50eeP7p/OlYDsvN8HNdxwray+S7qHlLyAoDnOMnoPlxkdCac//CJtFNlGKwMXPksy+ZlgoRN53EY+YnsVPZq4zzx/dP50nnj+6fzosB0epSeHjZPHZQv9qIJEi+YFByuAAx6Fd2c85HHFWptYguNL0KzdtP2284abFvgqMjO445GM5AzmuS88f3T+dL54/un86mVOMmm+hUZtJruWJjGZ5DECIi7bAeoXPH6YplQ+eP7p/Ojzx/dP51ZBNU1pJbxXUbXUBmgzh41faxBGMg9iOo7ZHPFU/PH90/nR54/un86AJtSkgluWe2gMEBJ2RlyxA46nue59zxxQvRfoKqu5c9MAdBTlmKgDAOKBmo0toxZnVixxj5cAf/WoeWzY5EeD67Tjp6Z6e1Zvnn+6Pzo88/3R+dFgL5e2+XEZ+6Qc+vHP86kMtkWQCNgoPPHWszzz/dH50eef7o/OiwF8vbMQqxAcjk5HHHXn608PZKCNhJBIGVPI7d/xrN88/wB0fnR55/uj86LAaAlthJlY8ADpjryP160pnhODIvmv3dhjP61neef7o/Ojzz/dH50WAvRTRxv6KHDD5c8Y6UyUxs2VJ6Dt1OKqeef7o/Ojzz/dH50ATVBP95fpS+ef7o/OomYu2TQIaeh+hrIHStc9D9KyAOKzmVE6210g3dijxlvPkyykj92AG27S397POPSpLnQHtbaSeSYlI0VywjOCDjgZxz14OO3rWZGjFPvsFzkAHv608ozAhpZCCcnJzWpJoP4duPMm8qRWjThGZSC5zjAAz6GmNoU0Fz5NzPFGdu4lctjLBR6cEmqWxunmyce9LtbLHzZMsMHnqPSgC9J4bvI13F4goOxixIw/AI6epxn2NKvhu88+OOVo4/M8wKTk5KDOMYzz2rP2HGPNkxnPWjY2QfOkyOhz0oAZdWzWsiIx5aNXxjBGex+hBqGrDR7yC0jMQABn0HAFJ5C/3j+VICCip/IX+8fyo8hf7x/KgCCip/IX+8fyo8hf7x/KgCCthfDtzLDC8DrIZIfOIAOFGAdpPPzc9PTHrWVIhQ9cg9DUkaOFz5jrnspoA0j4ZvxnLQgB9mSxGWzjHI9eKV/DN6gDb4gnALMSADj6c88VnFGPWaQ/U0bGxjzZMemaYF4eH7l7eCSJ1d5RkoP4Occn6/pk0y40C+toJpmCMkQG7aTzztwMgd//AK2aqCMr0lkH0NPYyvKZGuJS5O4sW5J9aAL0Hh5596pcKZBK0IG3C7lUE5JPHJx+FR/8I/dCDzWlhHyhgDu5GGPp/s4x6mqWxsEebJhjkjPU+9BjJ6yyHtyaANGPw1dNJNE8sSTR4+TP3gULZB49MH657VTvtKmsIY5JZIzvcqFXORgA5OQPX9KiMZY5Mjk+pNI0ZbO6Rznk5OaAK9FT+Qv94/lR5C/3j+VICCip/IX+8fyqJ0KNj8jQAw9D9KyR0rWPQ/SsodKiZSN9M+SMdcGtrV7Oxtra3a0cFmOMiYP5ibFO8j+A7iwx7e2ThRyhV2tnjuKd5ye/5VYiSio/OT1P5UecnqfyoESUVH5yep/Kjzk9T+VAElFR+cnqfyo85PU/lQBJRUfnJ6n8qPOT1P5UASUVH5yep/Kjzk9T+VADbjov41KOg+gqvK+8jA4FSLMu0Bsgj2oA07iCzj0mymimLXUjSedGR90Ajbj/ADzn2rd/snQ7qAzJPHaosSu224Dtv2IxUBjySWYe22uQ85PU/lR50fv+VSlZblSab0R2U/hnR3adrfWYxBE5dpfvqsWQo75yGYDnGcMRwBWZfabYWT3cMU4umhaF1bzAhZSGLrgEg9ByOeR9KwhcAKVDuFbGQOhx0yKb5sfv+VMR1cehaW/2Ui9Dm4RpNnmLmP5CcHB6A9zgnafWpYNH0BUDPeCWJXLNJJMFJXHChVJ5zk+46HgiuP8AOj9/yo86P3/KiwHUTweHI7axuv3jo0im4it5SJNh3k8PnB4XHXHOeopkNjoM+nwCS7e3uWiaUvu3Yw7DawPAONh456+1c15yep/Kjzk9T+VOwHVap4bsNO057yLUjc7S21SEVXKlPk4bdk7sggYAHNS3GkeHpcyx35tl3MoiikWXIHclmHWuQ85MAZOB046Uecnv+VKwGzrel2mmG3FrqKXvmKS7IAFGMcjnpyevPBrDn+8v0p/nR+/5VFI+9s44HApgMPQ/SskDitas4JxWcwubkGnXFxD5sarj+EFsFuccfjxzipYtGupVQr5fzAEjJ+QEZG7jAzx+Yptrf3UMAjiEWwd2QHocj8ic0qXmoRoqJdMFXgDI/wAOfx6dq1EIdG1IKW+xS4HB4FSNoV6pkG1SyBSVXJJ3ZwBgex9vemC91EdLuT72/O/nOMZ/KmG4vWKk3DErtKnd0252/lk/nQA5tH1BVVvszHcCQFYEn8j37evanS6JfxvtWEyDGQUIwcDJxn070n27Uef9Kbn0I/Tjj8Klm1XU5ZfME4jITZiPAGO/50aBqRSaRdwz+U4QNuRRhsgls4xjr0I/Ch9Fv44vMkgKLlgST0wM9vx/I+lC3moISVuWBIAJyOxJHb1J/OkN5qDRmM3TlDnKluOev55P50AJ/Y+o7C/2OXaOpxSrpN3v2yqsGV3BpWwD8wXqM9yBUkWo6lDIri5LbWVgHbIBUAKfwAH5Cmi+1JShF2+UTYvzDheDjp7D8qA1GHR9QBINpJkdenHt16+1LHpF9JPBCYChmYqhc4GQMnJ7cU9L/UUZT9oLBcDaxyCAQee56D8qR7/UnIJvJMgsQQ+MbuuMetADRo96Y0kMO1XcJ8xAIPqR2FPOjXDIvkYmkGBKiEZiJAIBz6g/0oOoakxUvdM21g+GIOSPXjmmfa7/AGqouWCpjaA3TGMfXGB19KAGJpl687QrbkyIMsu4cD86lGiaiY2c2rgKM4OAW5xx6/5xUQmvA24TEHaFzkdB0FSG+1IhQbtzt+783SgAOiakP+XOQ4GTjBx+tNXSrxnnRIgzQP5cgVgcH69DSi81BVdRdOFcYYbuDUsepajFFKiTKDI25nwNxP1oArTaddW8JlmiKKCBgkZ5z2+oxVWtG6vr28hWKVo9igDgYJxnqe/WqXkv/s/nSAjoqTyX/wBn86PJf/Z/OgZHRUnkv/s/nR5L/wCz+dAEdFSeS/8As/nTCCpwRg0CEqiHGKvHofpWSG4rOY7XN+P/AFS/SrhszuAV1PTOfXGe2e3rVKJ1KAZAI9al8wgEB+vX5utaAWVsmL4LrtzgkZ/D86BYybjudFUHDHk44zUCXEiMGWXkZxls4zTTKxBzIeTk/NQBZSxdxGQy4fHXrzSNZSKuSV4BJHfjrVfzD/f6f7VHmH+/7feoAsNYyhsKVYZxn3xmk+xS7Qw2kHPQ/wCf8mofOf8A56npj7/agTMFK+ZwRj73agCY2cu8r8vGM8+vSlNjMDglMjrz0GcZqDznwR5nUgk7ueOnNL9okO3MpO3p83SgCb7FJjhkPryeDnGOlRSwtE+04PuvIpplZiSZOSc/epPMP9//AMeoASikyPUfnRkeo/OgQtFJkeo/OjI9R+dAC0UmR6j86Mj1H50ALRSZHqPzoyPUfnQAtFJkeo/OjI9R+dAC0UmR6j86Mj1H50ALUE/3l+lTZHqPzqCZgzjBzgYoAiPQ/SsgdBWueh+lZAHFZzKibrW8ywJO0TiJyQrkcHHWmvDJGiM8bKrjKkjrV7T9VuLGMpDDE4wwyyk43Yz39hTrzVL69tvImUFOvAOc5znr15x9K1JMyineW/8AcP5UeW/9w/lSAbRTvLf+4fyo8t/7h/KgBtFO8t/7h/Kjy3/uH8qAG0U7y3/uH8qPLf8AuH8qAG0U7y3/uH8qPLf+4fyoAbRTvLf+4fyo8t/7h/KgBtFO8t/7h/Kjy3/uH8qAG0U7y3/uH8qPLf+4fyoAbRTvLf+4fyo8t/7h/KgBtFO8t/7h/Kjy3/uH8qAG0U7y3/uH8qPLf8AuH8qAG0U7y3/uH8qPLf+4fypvTrQAHofpWVitU9D9Kys1nUKib0fES/nVr7K5A2YZh95R1WqsRzGAO3Bqx582Mbj+XX6+taCEFu/miNgFY/wB4/wCFO+zPkDcmT2z0OM4/KmiWRW3A8428qDxS+fLjGeMY5UdP8igBskTxMFdcEgHH1plPd3kILkkj2pmD6GgAoowfQ0YPoaBBRRg+howfQ0AFFGD6GjB9DQAUUYPoaMH0NABRRg+howfQ0AFFGD6GjB9DQAUUYPoaMH0NABRRg+howfQ0AFFGD6GjB9DQAVBP98H1FT4PoagnILgegoAhPQ/SsjPFa56H6GsgdKzmVE2OlLk+p/OkorQkXJ9T+dGT6n86SigBcn1P50ZPqfzpKKAFyfU/nRk+p/OkooAXJ9T+dGT6n86SigBcn1P50ZPqfzoVSzADvU/koByT+dAEGT6n86Mn1P51P5Ke/wCdHkp/tfnQBBk+p/OjJ9T+dSSRBRlc4960LHS1uIRLK7KrfdC0m0tzrweCrYyp7Oirsy8n1P50ZPqfzrd/sa3/AL8n5j/Ck/se3/vyfmP8KnnR6v8Aq1juy+8w8n1P50ZPqfzrc/si3/vyfmP8KT+ybf8AvyfmKOdC/wBXMb2X3mJk+p/OjJ9T+dbX9kwf35PzFJ/ZUH9+T8xRzoX+ruN7L7zGyfU/nRk+p/Otj+y4P70n5ij+zIP7z/pRzoX+r2M7L7zHyfU/nSVrnTIf77/pWdcQG3lKE57g+opqSZyYvK8RhY89RaEB6H6GsgdK2D0P0rHHSpmefE2KKKK0JCiiigAooooAKKKKACiiigB8P+tH4/yrS07y/wC1LPzWCx+fHvYnGF3DJz24rMjOJF+tWqAPQtS8KeHLe7mMuqyebcRPNApuYVDMyh1bPZRkjDY3cEVi+KtF0XRrS2j0zUY76Zpm8x1lViq7FwCF4+9u59/auYLFjliScY5OaSlYY2T/AFZ+ordsP+PCH/d/rWDKcIPc1saW5eyAP8LED6VNTY+n4WmliZLvH9UdrpOmaJe6FH591FFqTzlMSz7FWLcmW9NwycA9RuPOKuz+E9Ei/ejV3aF5Gii5QeY6pvIDn5cYIXPTdmuJNDO7IqliVX7oJ4H0rE+tnh6vM3Go0mdzd+HvCiXLPHqu9HMqxwxTphSEYqNxPqo56HcOaof2ToX9iaFcG6t/tEtwi3qi4+bYzc8Z+UADk4GCe/WuSpKDNYaokr1G7f8AB/z/AAO3/sPwrfRz3UWp/ZI4mK+X5igyFeu0MSRnIxknoaji8J6JdyxwWutGSWeTZEQUbBOcKyg7htwCzfdweOlcWaFd42yjFTgjIOODQZvDVUtKr/A7KPQfDkV5pznVEuLe48/zEklUFQEJjJwwxlsDBI54zU/9g+FZim7U4LcyQ7XAmGIH3rg43NklSe5AxzXB0hoIlhqjd/aP+r/18i9rNra2Oqz21ncG4gQjbIcc8AkccHByMj0rnNS/16/7taZrIvmLXDZ7cCrhuednj5cHyvXVFRuh+hrHHSthuh+lY46CqmfEo//Z"
       },
       {
-            "id": "v_firin_ekim",
-            "title": "Ayın Fırın Performansı İyi 5 DMART'ı",
-            "category": "FIRIN",
-            "rank": 4,
-            "date": "Ekim Dönemi",
-            "rewardType": "FIRIN",
-            "rewardAmount": 0,
-            "extraPerk": "🥖 Balçova - Türkiye 4.'sü (nSFR * Satış * Fire)"
+        "id": "v_firin_ekim",
+        "title": "Ayın Fırın Performansı İyi 5 DMART'ı",
+        "category": "FIRIN",
+        "rank": 4,
+        "date": "Ekim Dönemi",
+        "rewardType": "KUPON",
+        "rewardAmount": 600,
+        "extraPerk": "🥖 Balçova - Türkiye 4.'sü (nSFR * Satış * Fire)"
       },
       {
-            "id": "v18",
-            "title": "DMART Ligi 12. Hafta Sıralaması",
-            "category": "LİG",
-            "rank": 3,
-            "date": "DMART Ligi 12. Hafta",
-            "rewardType": "KUPON",
-            "rewardAmount": 850,
-            "extraPerk": "Şampiyonlar Ligi 3.'sü"
+        "id": "v18",
+        "title": "DMART Ligi 12. Hafta Sıralaması",
+        "category": "LİG",
+        "rank": 3,
+        "date": "DMART Ligi 12. Hafta",
+        "rewardType": "KUPON",
+        "rewardAmount": 850,
+        "extraPerk": "Şampiyonlar Ligi 3.'sü"
       },
       {
-            "id": "v17",
-            "title": "DMART Ligi 11. Hafta Zaferi",
-            "category": "LİG",
-            "rank": 1,
-            "date": "DMART Ligi 11. Hafta",
-            "rewardType": "KUPON",
-            "rewardAmount": 1250,
-            "extraPerk": "Şampiyonlar Ligi 1.'si"
+        "id": "v17",
+        "title": "DMART Ligi 11. Hafta Zaferi",
+        "category": "LİG",
+        "rank": 1,
+        "date": "DMART Ligi 11. Hafta",
+        "rewardType": "KUPON",
+        "rewardAmount": 1250,
+        "extraPerk": "Şampiyonlar Ligi 1.'si"
       },
       {
-            "id": "v16",
-            "title": "DMART Ligi 10. Hafta Sıralaması",
-            "category": "LİG",
-            "rank": 3,
-            "date": "DMART Ligi 10. Hafta",
-            "rewardType": "KUPON",
-            "rewardAmount": 850,
-            "extraPerk": "Şampiyonlar Ligi 3.'sü"
+        "id": "v16",
+        "title": "DMART Ligi 10. Hafta Sıralaması",
+        "category": "LİG",
+        "rank": 3,
+        "date": "DMART Ligi 10. Hafta",
+        "rewardType": "KUPON",
+        "rewardAmount": 850,
+        "extraPerk": "Şampiyonlar Ligi 3.'sü"
       },
       {
-            "id": "v15",
-            "title": "DMART Ligi 9. Hafta Sıralaması",
-            "category": "LİG",
-            "rank": 3,
-            "date": "DMART Ligi 9. Hafta",
-            "rewardType": "KUPON",
-            "rewardAmount": 850,
-            "extraPerk": "Şampiyonlar Ligi 3.'sü"
+        "id": "v15",
+        "title": "DMART Ligi 9. Hafta Sıralaması",
+        "category": "LİG",
+        "rank": 3,
+        "date": "DMART Ligi 9. Hafta",
+        "rewardType": "KUPON",
+        "rewardAmount": 850,
+        "extraPerk": "Şampiyonlar Ligi 3.'sü"
       },
       {
-            "id": "v14",
-            "title": "DMART Ligi 8. Hafta Zaferi",
-            "category": "LİG",
-            "rank": 1,
-            "date": "DMART Ligi 8. Hafta",
-            "rewardType": "KUPON",
-            "rewardAmount": 1250,
-            "extraPerk": "Şampiyonlar Ligi 1.'si"
+        "id": "v14",
+        "title": "DMART Ligi 8. Hafta Zaferi",
+        "category": "LİG",
+        "rank": 1,
+        "date": "DMART Ligi 8. Hafta",
+        "rewardType": "KUPON",
+        "rewardAmount": 1250,
+        "extraPerk": "Şampiyonlar Ligi 1.'si"
       },
       {
-            "id": "v13",
-            "title": "DMART Ligi 7. Hafta Zaferi",
-            "category": "LİG",
-            "rank": 1,
-            "date": "DMART Ligi 7. Hafta",
-            "rewardType": "KUPON",
-            "rewardAmount": 1875,
-            "extraPerk": "Şampiyonlar Ligi 1.'si (Özel Hafta)"
+        "id": "v13",
+        "title": "DMART Ligi 7. Hafta Zaferi",
+        "category": "LİG",
+        "rank": 1,
+        "date": "DMART Ligi 7. Hafta",
+        "rewardType": "KUPON",
+        "rewardAmount": 1875,
+        "extraPerk": "Şampiyonlar Ligi 1.'si (Özel Hafta)"
       },
       {
-            "id": "v12",
-            "title": "DMART Ligi 6. Hafta Zaferi",
-            "category": "LİG",
-            "rank": 1,
-            "date": "DMART Ligi 6. Hafta",
-            "rewardType": "KUPON",
-            "rewardAmount": 1250,
-            "extraPerk": "Şampiyonlar Ligi 1.'si"
+        "id": "v12",
+        "title": "DMART Ligi 6. Hafta Zaferi",
+        "category": "LİG",
+        "rank": 1,
+        "date": "DMART Ligi 6. Hafta",
+        "rewardType": "KUPON",
+        "rewardAmount": 1250,
+        "extraPerk": "Şampiyonlar Ligi 1.'si"
       },
       {
-            "id": "v11",
-            "title": "DMART Ligi 5. Hafta Sıralaması",
-            "category": "LİG",
-            "rank": 4,
-            "date": "DMART Ligi 5. Hafta",
-            "rewardType": "KUPON",
-            "rewardAmount": 2100,
-            "extraPerk": "Şampiyonlar Ligi 4.'sü (Büyük Hafta)"
+        "id": "v11",
+        "title": "DMART Ligi 5. Hafta Sıralaması",
+        "category": "LİG",
+        "rank": 4,
+        "date": "DMART Ligi 5. Hafta",
+        "rewardType": "KUPON",
+        "rewardAmount": 2100,
+        "extraPerk": "Şampiyonlar Ligi 4.'sü (Büyük Hafta)"
       },
       {
-            "id": "v10",
-            "title": "DMART Ligi 3. Hafta Sıralaması",
-            "category": "LİG",
-            "rank": 3,
-            "date": "DMART Ligi 3. Hafta",
-            "rewardType": "KUPON",
-            "rewardAmount": 850,
-            "extraPerk": "Şampiyonlar Ligi 3.'sü"
+        "id": "v10",
+        "title": "DMART Ligi 3. Hafta Sıralaması",
+        "category": "LİG",
+        "rank": 3,
+        "date": "DMART Ligi 3. Hafta",
+        "rewardType": "KUPON",
+        "rewardAmount": 850,
+        "extraPerk": "Şampiyonlar Ligi 3.'sü"
       },
       {
-            "id": "v3",
-            "title": "Ayın En İyi 5 DMART'ı - Ekim",
-            "category": "AYIN_DEPOSU",
-            "rank": 2,
-            "date": "Ekim Dönemi",
-            "rewardType": "TICKET",
-            "rewardAmount": 2500,
-            "extraPerk": "🎳 Bowling Organizasyonu"
+        "id": "v3",
+        "title": "Ayın En İyi 5 DMART'ı - Ekim",
+        "category": "AYIN_DEPOSU",
+        "rank": 2,
+        "date": "Ekim Dönemi",
+        "rewardType": "TICKET",
+        "rewardAmount": 2500,
+        "extraPerk": "🎳 Bowling Organizasyonu"
       },
       {
-            "id": "v2",
-            "title": "Ayın En İyi 5 DMART'ı - Eylül",
-            "category": "AYIN_DEPOSU",
-            "rank": 3,
-            "date": "Eylül Dönemi",
-            "rewardType": "TICKET",
-            "rewardAmount": 2000,
-            "extraPerk": "🎳 Bowling Organizasyonu"
+        "id": "v2",
+        "title": "Ayın En İyi 5 DMART'ı - Eylül",
+        "category": "AYIN_DEPOSU",
+        "rank": 3,
+        "date": "Eylül Dönemi",
+        "rewardType": "TICKET",
+        "rewardAmount": 2000,
+        "extraPerk": "🎳 Bowling Organizasyonu"
       },
       {
-            "id": "v1",
-            "title": "Ayın En İyi 5 DMART'ı - Mayıs",
-            "category": "AYIN_DEPOSU",
-            "rank": 4,
-            "date": "Mayıs Dönemi",
-            "rewardType": "TICKET",
-            "rewardAmount": 1500,
-            "extraPerk": "🎳 Bowling Organizasyonu"
+        "id": "v1",
+        "title": "Ayın En İyi 5 DMART'ı - Mayıs",
+        "category": "AYIN_DEPOSU",
+        "rank": 4,
+        "date": "Mayıs Dönemi",
+        "rewardType": "TICKET",
+        "rewardAmount": 1500,
+        "extraPerk": "🎳 Bowling Organizasyonu"
       },
       {
-            "id": "v9",
-            "title": "44. Tur Challenge Sıralaması",
-            "category": "CHALLENGE",
-            "rank": 2,
-            "date": "44. Tur",
-            "rewardType": "KUPA",
-            "rewardAmount": 0,
-            "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
+        "id": "v9",
+        "title": "44. Tur Challenge Sıralaması",
+        "category": "CHALLENGE",
+        "rank": 2,
+        "date": "44. Tur",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
       },
       {
-            "id": "v8",
-            "title": "40. Tur Challenge Sıralaması",
-            "category": "CHALLENGE",
-            "rank": 2,
-            "date": "40. Tur",
-            "rewardType": "KUPA",
-            "rewardAmount": 0,
-            "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
+        "id": "v8",
+        "title": "40. Tur Challenge Sıralaması",
+        "category": "CHALLENGE",
+        "rank": 2,
+        "date": "40. Tur",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
       },
       {
-            "id": "v7",
-            "title": "38. Tur Challenge Sıralaması",
-            "category": "CHALLENGE",
-            "rank": 3,
-            "date": "38. Tur",
-            "rewardType": "KUPA",
-            "rewardAmount": 0,
-            "extraPerk": "B Grubu 3.'sü (Bronz Kupa 🥉)"
+        "id": "v7",
+        "title": "38. Tur Challenge Sıralaması",
+        "category": "CHALLENGE",
+        "rank": 3,
+        "date": "38. Tur",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "B Grubu 3.'sü (Bronz Kupa 🥉)"
       },
       {
-            "id": "v6",
-            "title": "36. Tur Challenge Sıralaması",
-            "category": "CHALLENGE",
-            "rank": 2,
-            "date": "36. Tur",
-            "rewardType": "KUPA",
-            "rewardAmount": 0,
-            "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
+        "id": "v6",
+        "title": "36. Tur Challenge Sıralaması",
+        "category": "CHALLENGE",
+        "rank": 2,
+        "date": "36. Tur",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
       },
       {
-            "id": "v5",
-            "title": "32. Tur Challenge Zaferi",
-            "category": "CHALLENGE",
-            "rank": 1,
-            "date": "32. Tur",
-            "rewardType": "KUPA",
-            "rewardAmount": 0,
-            "extraPerk": "B Grubu 1.'si (Altın Kupa 🏆)"
+        "id": "v5",
+        "title": "32. Tur Challenge Zaferi",
+        "category": "CHALLENGE",
+        "rank": 1,
+        "date": "32. Tur",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "B Grubu 1.'si (Altın Kupa 🏆)"
       },
       {
-            "id": "v4",
-            "title": "25. Tur Challenge Sıralaması",
-            "category": "CHALLENGE",
-            "rank": 2,
-            "date": "25. Tur",
-            "rewardType": "KUPA",
-            "rewardAmount": 0,
-            "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
+        "id": "v4",
+        "title": "25. Tur Challenge Sıralaması",
+        "category": "CHALLENGE",
+        "rank": 2,
+        "date": "25. Tur",
+        "rewardType": "KUPA",
+        "rewardAmount": 0,
+        "extraPerk": "B Grubu 2.'si (Gümüş Kupa 🥈)"
       }
-];
+    ];
 
     let victoriesList = [];
     let currentFilter = 'ALL';
     let searchQuery = '';
     let uploadedPhotoBase64 = '';
-
     let editingId = null;
 
     function editVictory(id) {
@@ -1301,6 +1290,7 @@
       document.getElementById('fTitle').value = record.title || '';
       document.getElementById('fDate').value = record.date || '';
       document.getElementById('fRewardAmount').value = record.rewardAmount || 0;
+      document.getElementById('fRewardType').value = record.rewardType || 'KUPON';
       document.getElementById('fExtraPerk').value = record.extraPerk || '';
       
       uploadedPhotoBase64 = record.photo || '';
@@ -1308,7 +1298,6 @@
       document.getElementById('modalOverlay').style.display = 'flex';
       lucide.createIcons();
     }
-
 
     function getAvatarUrl(name, photo) {
       if (photo && photo.trim() && photo !== 'mehmet.jpg') return photo;
@@ -1325,13 +1314,27 @@
     }
 
     function init() {
-      const saved = localStorage.getItem('balcova_pano_records_v15_edit');
-      if (saved) {
-        try { victoriesList = JSON.parse(saved); } catch (e) { victoriesList = INITIAL_VICTORIES; }
+      // Önceki versiyondaki fotoğrafları korumak için merge yapıyoruz
+      const oldSaved = localStorage.getItem('balcova_pano_records_v15_edit') || localStorage.getItem('balcova_pano_records_v16_fixed');
+      if (oldSaved) {
+        try {
+          const parsed = JSON.parse(oldSaved);
+          // Fırın kaydını güncelle
+          victoriesList = parsed.map(item => {
+            if (item.id === 'v_firin_ekim') {
+              return { ...item, rewardType: 'KUPON', rewardAmount: 600 };
+            }
+            return item;
+          });
+        } catch (e) {
+          victoriesList = INITIAL_VICTORIES;
+        }
       } else {
         victoriesList = INITIAL_VICTORIES;
-        localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
       }
+      localStorage.setItem('balcova_pano_records_v16_fixed', JSON.stringify(victoriesList));
+      localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
+
       renderStats();
       renderVictories();
       lucide.createIcons();
@@ -1342,9 +1345,15 @@
       document.getElementById('statTotalVictories').innerText = victoriesList.length;
       document.getElementById('statFirstPlaces').innerText = victoriesList.filter(v => v.rank === 1).length;
       
-      const totalCoupon = victoriesList.filter(v => v.rewardType === 'KUPON').reduce((sum, v) => sum + (Number(v.rewardAmount) || 0), 0);
-      // Fırın, F/UF, Picker ve Ayın Deposu gibi Kupon harici tüm parasal ödülleri sağdaki kutuda topla
-      const totalTicket = victoriesList.filter(v => v.rewardType !== 'KUPON' && v.rewardType !== 'KUPA').reduce((sum, v) => sum + (Number(v.rewardAmount) || 0), 0);
+      // Tüm Kupon ödüllerini (Kategori Fırın veya Lig olsun fark etmez) topla
+      const totalCoupon = victoriesList
+        .filter(v => v.rewardType === 'KUPON')
+        .reduce((sum, v) => sum + (Number(v.rewardAmount) || 0), 0);
+
+      // Tüm Ticket ödüllerini topla
+      const totalTicket = victoriesList
+        .filter(v => v.rewardType === 'TICKET')
+        .reduce((sum, v) => sum + (Number(v.rewardAmount) || 0), 0);
 
       document.getElementById('statTotalCoupon').innerText = totalCoupon.toLocaleString('tr-TR') + ' ₺';
       document.getElementById('statTotalTicket').innerText = totalTicket.toLocaleString('tr-TR') + ' ₺';
@@ -1358,7 +1367,6 @@
       
       let pickerList = victoriesList.filter(v => v.category === 'PICKER');
       
-      // Eğer kullanıcı spesifik olarak Kupon, Ticket veya Challenge filtrelediyse Hall of Fame gizlenebilir
       if (currentFilter !== 'ALL' && currentFilter !== 'PICKER') {
         pickerList = [];
       }
@@ -1451,13 +1459,13 @@
         } else if (v.rewardType === 'TICKET') {
           rewardBadgeHtml = `<div class="reward-box type-ticket"><i data-lucide="credit-card" style="width: 16px; height: 16px;"></i><span>${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ Ticket</span></div>`;
         } else if (v.category === 'FIRIN') {
-          let rText = v.rewardAmount > 0 ? `${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ Ödül & Fırın Derecesi` : `Fırın Derecesi (Top 5)`;
+          let rText = v.rewardAmount > 0 ? `${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ ${v.rewardType === 'KUPON' ? 'Kupon' : 'Ticket'} Ödülü` : `Fırın Derecesi (Top 5)`;
           rewardBadgeHtml = `<div class="reward-box type-firin"><i data-lucide="flame" style="width: 16px; height: 16px;"></i><span>${rText}</span></div>`;
         } else if (v.category === 'PICKER') {
           let rText = v.rewardAmount > 0 ? `${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ Ödül & Yıldız Görevli` : `Ayın Yıldız Görevlisi`;
           rewardBadgeHtml = `<div class="reward-box type-picker"><i data-lucide="zap" style="width: 16px; height: 16px;"></i><span>${rText}</span></div>`;
         } else if (v.category === 'FUF') {
-          let rText = v.rewardAmount > 0 ? `${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ Ödül & F/UF Derecesi` : `F/UF Performans Derecesi`;
+          let rText = v.rewardAmount > 0 ? `${Number(v.rewardAmount).toLocaleString('tr-TR')} ₺ ${v.rewardType === 'KUPON' ? 'Kupon' : 'Ticket'} Ödülü` : `F/UF Performans Derecesi`;
           rewardBadgeHtml = `<div class="reward-box type-fuf"><i data-lucide="leaf" style="width: 16px; height: 16px;"></i><span>${rText}</span></div>`;
         } else {
           rewardBadgeHtml = `<div class="reward-box type-trophy"><i data-lucide="trophy" style="width: 16px; height: 16px;"></i><span>${v.rank === 1 ? 'Altın Kupa 🏆' : (v.rank === 2 ? 'Gümüş Kupa 🥈' : 'Bronz Kupa 🥉')}</span></div>`;
@@ -1533,11 +1541,9 @@
       const lblDate = document.getElementById('lblDate');
       const fDate = document.getElementById('fDate');
       const lblExtra = document.getElementById('lblExtraPerk');
-      const extraInput = document.getElementById('fExtraPerk');
       const rInput = document.getElementById('fRewardAmount');
-      const rLabel = document.getElementById('lblRewardType');
+      const rTypeSelect = document.getElementById('fRewardType');
 
-      // 1. Sıralama Seçeneklerini Dinamik Olarak Doldur (Picker için 1-10, diğerleri için 1-5)
       rankSelect.innerHTML = '';
       if (cat === 'PICKER') {
         for (let i = 1; i <= 10; i++) {
@@ -1555,7 +1561,7 @@
         lblDate.innerText = "Hangi Ay / Dönem?";
         fDate.placeholder = "Örn: Temmuz Dönemi";
         lblExtra.innerText = "Görevli Başarı Notu";
-        rLabel.innerText = "Ödül Tutarı (Varsa ₺)";
+        rTypeSelect.value = "KUPA";
         rInput.value = 0;
       } else {
         for (let i = 1; i <= 5; i++) {
@@ -1577,34 +1583,34 @@
           fTitle.placeholder = "Sadece hafta rakamı yazın (Örn: 13)...";
           lblDate.innerText = "Tarih / Hafta Notu";
           fDate.placeholder = "Örn: DMART Ligi 13. Hafta";
-          rLabel.innerText = "Kupon Tutarı (₺)";
+          rTypeSelect.value = "KUPON";
         } else if (cat === 'CHALLENGE') {
           lblTitle.innerText = "Challenge Tur Numarası";
           fTitle.placeholder = "Sadece tur rakamı yazın (Örn: 45)...";
           lblDate.innerText = "Tur Dönemi";
           fDate.placeholder = "Örn: 45. Tur";
-          rLabel.innerText = "Ödül Tutarı (Varsa ₺)";
+          rTypeSelect.value = "KUPA";
           rInput.value = 0;
         } else if (cat === 'AYIN_DEPOSU') {
           lblTitle.innerText = "Dönem Başlığı";
           fTitle.placeholder = "Örn: Ayın En İyi 5 DMART'ı - Ekim";
           lblDate.innerText = "Hangi Ay? / Dönem";
           fDate.placeholder = "Örn: Ekim Dönemi";
-          rLabel.innerText = "Ticket Tutarı (₺)";
+          rTypeSelect.value = "TICKET";
         } else if (cat === 'FIRIN') {
           lblTitle.innerText = "Dönem Başlığı";
           fTitle.placeholder = "Örn: Ayın Fırın Performansı İyi 5 DMART'ı";
           lblDate.innerText = "Hangi Ay? / Dönem";
           fDate.placeholder = "Örn: Ekim Dönemi";
-          rLabel.innerText = "Ödül Tutarı (Varsa ₺)";
-          rInput.value = 0;
+          rTypeSelect.value = "KUPON";
+          rInput.value = 600;
         } else if (cat === 'FUF') {
           lblTitle.innerText = "Dönem Başlığı";
           fTitle.placeholder = "Örn: Ayın F/UF Performansı İyi 5 DMART'ı";
           lblDate.innerText = "Hangi Ay? / Dönem";
           fDate.placeholder = "Örn: Ekim Dönemi";
-          rLabel.innerText = "Ödül Tutarı (Varsa ₺)";
-          rInput.value = 0;
+          rTypeSelect.value = "KUPON";
+          rInput.value = 600;
         }
       }
       autoFillReward();
@@ -1614,10 +1620,12 @@
       const cat = document.getElementById('fCategory').value;
       const rank = Number(document.getElementById('fRank').value);
       const rInput = document.getElementById('fRewardAmount');
+      const rTypeSelect = document.getElementById('fRewardType');
       const extraInput = document.getElementById('fExtraPerk');
       const titleVal = document.getElementById('fTitle').value.trim();
 
       if (cat === 'LİG') {
+        rTypeSelect.value = 'KUPON';
         if (rank === 1) rInput.value = 1250; 
         else if (rank === 2) rInput.value = 1050; 
         else if (rank === 3) rInput.value = 850; 
@@ -1625,6 +1633,7 @@
         extraInput.value = `Şampiyonlar Ligi ${rank}.'si`;
       } 
       else if (cat === 'AYIN_DEPOSU') {
+        rTypeSelect.value = 'TICKET';
         if (rank === 1) rInput.value = 3000; 
         else if (rank === 2) rInput.value = 2500; 
         else if (rank === 3) rInput.value = 2000; 
@@ -1633,19 +1642,27 @@
         extraInput.value = "🎳 Bowling Organizasyonu";
       } 
       else if (cat === 'FIRIN') {
-        rInput.value = (rank <= 5) ? 600 : 0;
+        if (!editingId) {
+          rTypeSelect.value = 'KUPON';
+          rInput.value = (rank <= 5) ? 600 : 0;
+        }
         extraInput.value = `🥖 Balçova - Türkiye ${rank}.'si (nSFR * Satış * Fire)`;
       }
       else if (cat === 'PICKER') {
+        rTypeSelect.value = 'KUPA';
         rInput.value = 0;
         let pName = titleVal || "Görevli";
         extraInput.value = `${pName} - Türkiye ${rank}.'si (nSFR * Prep Time * Putaway)`;
       }
       else if (cat === 'FUF') {
-        rInput.value = (rank <= 5) ? 600 : 0;
+        if (!editingId) {
+          rTypeSelect.value = 'KUPON';
+          rInput.value = (rank <= 5) ? 600 : 0;
+        }
         extraInput.value = `🥬 Balçova - Türkiye ${rank}.'si (nSFR * Satış * Fire - F/UF Ürünler)`;
       }
       else {
+        rTypeSelect.value = 'KUPA';
         rInput.value = 0;
         if (rank === 1) extraInput.value = "B Grubu 1.'si (Altın Kupa 🏆)";
         else if (rank === 2) extraInput.value = "B Grubu 2.'si (Gümüş Kupa 🥈)";
@@ -1695,12 +1712,8 @@
     function saveVictory(e) {
       e.preventDefault();
       const cat = document.getElementById('fCategory').value;
-      let rType = 'KUPA'; 
-      if (cat === 'LİG') rType = 'KUPON'; 
-      if (cat === 'AYIN_DEPOSU') rType = 'TICKET';
-      if (cat === 'PICKER') rType = 'PICKER';
-      if (cat === 'FIRIN') rType = 'FIRIN';
-      if (cat === 'FUF') rType = 'FUF';
+      const rType = document.getElementById('fRewardType').value;
+      const rAmount = Number(document.getElementById('fRewardAmount').value) || 0;
 
       const newEntry = {
         id: editingId ? editingId : "v_" + Date.now(),
@@ -1708,7 +1721,7 @@
         rank: Number(document.getElementById('fRank').value),
         title: document.getElementById('fTitle').value.trim(),
         rewardType: rType,
-        rewardAmount: Number(document.getElementById('fRewardAmount').value) || 0,
+        rewardAmount: rAmount,
         extraPerk: document.getElementById('fExtraPerk').value.trim(),
         date: document.getElementById('fDate').value.trim() || "Yeni Kayıt",
         photo: uploadedPhotoBase64 || (document.getElementById('fPhoto') ? document.getElementById('fPhoto').value.trim() : '')
@@ -1724,6 +1737,7 @@
         showToast("Yeni derece panoya başarıyla eklendi.");
       }
 
+      localStorage.setItem('balcova_pano_records_v16_fixed', JSON.stringify(victoriesList));
       localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
       closeModal(); 
       renderStats(); 
@@ -1735,6 +1749,7 @@
       const pass = prompt("Bu kaydı silmek için yönetici şifresini girin:");
       if (pass === "Balcova35") {
         victoriesList = victoriesList.filter(v => v.id !== id);
+        localStorage.setItem('balcova_pano_records_v16_fixed', JSON.stringify(victoriesList));
         localStorage.setItem('balcova_pano_records_v15_edit', JSON.stringify(victoriesList));
         renderStats(); 
         renderVictories(); 
@@ -1755,9 +1770,7 @@
       setTimeout(() => { t.style.display = 'none'; }, 3000); 
     }
 
-    // -----------------------------------------------------
     // TAB NAVIGATION
-    // -----------------------------------------------------
     function switchMainTab(tabId, btn) {
       document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -1765,9 +1778,7 @@
       document.getElementById('tab-' + tabId).classList.add('active');
     }
 
-    // -----------------------------------------------------
-    // TAB 2: NSFR / KPI REPORT ANALYSIS JS (SheetJS + ChartJS)
-    // -----------------------------------------------------
+    // TAB 2: NSFR / KPI REPORT ANALYSIS JS
     let chartIssue = null;
     let chartCat = null;
 
@@ -1796,9 +1807,6 @@
       let productStats = {};
 
       rows.forEach(row => {
-        // Balçova filtresi (opsiyonel, genelde dosya zaten balçovadır)
-        // if(row['Store'] && !row['Store'].includes('Balçova')) return;
-
         let cost = parseFloat(row['Refund & Comp']) || 0;
         totalCost += cost;
 
@@ -1816,17 +1824,14 @@
         }
       });
 
-      // Update Summary Cards
       document.getElementById('nsfrTotalIssues').innerText = rows.length;
       document.getElementById('nsfrTotalCost').innerText = totalCost.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ₺';
       
       const topIssue = Object.keys(issueCounts).sort((a,b) => issueCounts[b] - issueCounts[a])[0];
       document.getElementById('nsfrTopIssue').innerText = topIssue || '-';
 
-      // Charts
       drawCharts(issueCounts, catCounts);
 
-      // Table (Top 10 SKUs by issue count)
       const topProducts = Object.entries(productStats)
         .map(([name, data]) => ({ name, ...data }))
         .sort((a,b) => b.count - a.count)
@@ -1850,7 +1855,6 @@
       Chart.defaults.color = '#94a3b8';
       Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
-      // Issue Chart
       const ctxIssue = document.getElementById('issueChart').getContext('2d');
       if (chartIssue) chartIssue.destroy();
       chartIssue = new Chart(ctxIssue, {
@@ -1870,7 +1874,6 @@
         }
       });
 
-      // Category Chart
       const ctxCat = document.getElementById('catChart').getContext('2d');
       if (chartCat) chartCat.destroy();
       
@@ -1898,8 +1901,7 @@
       });
     }
 
-    
-    const historicData = [{"month": "Oca", "pfr": 0.034, "refund": 1.02, "comp": 0.09, "nsfr": 1.14}, {"month": "\u015eub", "pfr": 0.009, "refund": 1.25, "comp": 0.27, "nsfr": 1.54}, {"month": "Mar", "pfr": 0.084, "refund": 0.87, "comp": 0.19, "nsfr": 1.14}, {"month": "Nis", "pfr": 0.007, "refund": 0.82, "comp": 0.33, "nsfr": 1.15}, {"month": "May", "pfr": 0.014, "refund": 0.68, "comp": 0.17, "nsfr": 0.87}, {"month": "Haz", "pfr": 0.022, "refund": 0.65, "comp": 0.08, "nsfr": 0.75}, {"month": "Tem", "pfr": 0.0, "refund": 0.69, "comp": 0.16, "nsfr": 0.86}, {"month": "A\u011fu", "pfr": 0.016, "refund": 0.76, "comp": 0.22, "nsfr": 0.99}, {"month": "Eyl", "pfr": 0.024, "refund": 0.6, "comp": 0.08, "nsfr": 0.71}, {"month": "Eki", "pfr": 0.015, "refund": 0.65, "comp": 0.07, "nsfr": 0.73}];
+    const historicData = [{"month": "Oca", "pfr": 0.034, "refund": 1.02, "comp": 0.09, "nsfr": 1.14}, {"month": "Şub", "pfr": 0.009, "refund": 1.25, "comp": 0.27, "nsfr": 1.54}, {"month": "Mar", "pfr": 0.084, "refund": 0.87, "comp": 0.19, "nsfr": 1.14}, {"month": "Nis", "pfr": 0.007, "refund": 0.82, "comp": 0.33, "nsfr": 1.15}, {"month": "May", "pfr": 0.014, "refund": 0.68, "comp": 0.17, "nsfr": 0.87}, {"month": "Haz", "pfr": 0.022, "refund": 0.65, "comp": 0.08, "nsfr": 0.75}, {"month": "Tem", "pfr": 0.0, "refund": 0.69, "comp": 0.16, "nsfr": 0.86}, {"month": "Ağu", "pfr": 0.016, "refund": 0.76, "comp": 0.22, "nsfr": 0.99}, {"month": "Eyl", "pfr": 0.024, "refund": 0.6, "comp": 0.08, "nsfr": 0.71}, {"month": "Eki", "pfr": 0.015, "refund": 0.65, "comp": 0.07, "nsfr": 0.73}];
     
     function drawMonthlyTrend() {
       const ctx = document.getElementById('monthlyTrendChart').getContext('2d');
@@ -1974,8 +1976,6 @@
         }
       });
     }
-
-    // Call drawMonthlyTrend inside init()
 
     window.addEventListener('DOMContentLoaded', init);
   </script>
